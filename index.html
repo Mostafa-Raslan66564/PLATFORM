@@ -3139,6 +3139,20 @@
             appData.deletedEmails = (appData.deletedEmails || []).filter(e => inTrash.has(String(e).toLowerCase()) && e !== email);
         }
         forgetDeleted(); migrateGrades(); applyPaymentRules(); flushSave();
+        // حفظ البيانات عند النقر على زر الحفظ
+        document.getElementById('saveBtn').addEventListener('click', function () {
+            const inputData = document.getElementById('myInput').value;
+            localStorage.setItem('savedData', inputData);
+            alert('تم حفظ التعديلات بنجاح!');
+        });
+
+        // استرجاع البيانات تلقائياً عند فتح الصفحة
+        window.addEventListener('load', function () {
+            const savedData = localStorage.getItem('savedData');
+            if (savedData) {
+                document.getElementById('myInput').value = savedData;
+            }
+        });
     </script>
 </body>
 
