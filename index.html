@@ -1139,7 +1139,7 @@
 
     <header>
         <div class="logo-area">
-            <img src="شعار.png" class="platform-logo" alt="شعار المنصة"
+            <img src="./شعار.png" class="platform-logo" alt="شعار المنصة"
                 onerror="this.onerror=null;this.src=FALLBACK_AVATAR">
             <h2>منصة بالقرآن نحيا</h2>
             <span class="net-badge" id="net-badge">متصل بالإنترنت</span>
@@ -1429,7 +1429,7 @@
             <div class="card" style="max-width: 850px; margin: 0 auto; width: 100%;">
                 <div
                     style="display: flex; align-items: center; gap: 18px; margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 15px;">
-                    <img id="p-avatar" src="شعار.png" alt="صورة الشخص"
+                    <img id="p-avatar" src="./شعار.png" alt="صورة الشخص"
                         style="width: 75px; height: 75px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent-color);">
                     <div>
                         <h3 id="p-name" style="margin-bottom: 4px;">-</h3>
@@ -1933,7 +1933,7 @@
             document.getElementById('p-role').innerText = student.role;
             document.getElementById('p-class').innerText = student.className || 'غير معين';
 
-            if (student.avatar) document.getElementById('p-avatar').src = student.avatar;
+            if (student.avatar) document.getElementById('p-avatar').src = imgSrc(student.avatar);
 
             let gradeEl = document.getElementById('p-grade');
             gradeEl.innerText = marksList(student) || "لا توجد علامات بعد";
@@ -2090,6 +2090,11 @@
         /* ---------- أدوات عامة ---------- */
         function esc(v) {
             return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+
+        function imgSrc(u) {
+            u = String(u || '').trim();
+            return /^(https?:\/\/|data:|\.\/|\/)/i.test(u) || !u ? u : './' + u;
         }
 
         function safeUrl(u) {
@@ -3115,7 +3120,7 @@
             const avatar = safeUrl(st.avatar) || 'شعار.png';
             return `<tr>
                 <td><strong>${esc(st.id || 'QURAN-1000')}</strong></td>
-                <td><img src="${esc(avatar)}" class="avatar-img" alt="صورة" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src=FALLBACK_AVATAR"></td>
+                <td><img src="${esc(imgSrc(avatar))}" class="avatar-img" alt="صورة" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src=FALLBACK_AVATAR"></td>
                 <td><strong title="${esc(tip)}">${esc(st.name)}</strong>${age ? ` <span class="muted-small">(${age} سنة)</span>` : ''}</td>
                 <td class="cell-email">${st.email ? esc(st.email) : '<span class="muted-small">لا يوجد</span>'}</td>
                 <td><span class="badge badge-class">${esc(st.className || 'غير معين')}</span></td>
@@ -3139,21 +3144,118 @@
             appData.deletedEmails = (appData.deletedEmails || []).filter(e => inTrash.has(String(e).toLowerCase()) && e !== email);
         }
         forgetDeleted(); migrateGrades(); applyPaymentRules(); flushSave();
-        // حفظ البيانات عند النقر على زر الحفظ
-        document.getElementById('saveBtn').addEventListener('click', function () {
-            const inputData = document.getElementById('myInput').value;
-            localStorage.setItem('savedData', inputData);
-            alert('تم حفظ التعديلات بنجاح!');
-        });
-
-        // استرجاع البيانات تلقائياً عند فتح الصفحة
-        window.addEventListener('load', function () {
-            const savedData = localStorage.getItem('savedData');
-            if (savedData) {
-                document.getElementById('myInput').value = savedData;
-            }
-        });
     </script>
+    <!-- ===== Firebase: مزامنة البيانات بين الأجهزة + جلسة واحدة لكل حساب ===== -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script>
+        (function () {
+            const firebaseConfig = {
+                apiKey: "AIzaSyAvEUiZ0hse2O1gDUhgN26yj6juNRXvdZY",
+                authDomain: "platform-ac62f.firebaseapp.com",
+                projectId: "platform-ac62f",
+                storageBucket: "platform-ac62f.firebasestorage.app",
+                messagingSenderId: "540766277775",
+                appId: "1:540766277775:web:e85c531a728824d23de0fa"
+            };
+            if (!window.firebase) { console.warn('Firebase غير متاح (لا يوجد إنترنت). التطبيق يعمل محلياً.'); return; }
+            firebase.initializeApp(firebaseConfig);
+            const db = firebase.firestore();
+
+            const rnd = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
+            let DEVICE_ID = null;
+            try { DEVICE_ID = localStorage.getItem('quran_device_id'); if (!DEVICE_ID) { DEVICE_ID = rnd(); localStorage.setItem('quran_device_id', DEVICE_ID); } } catch (e) { DEVICE_ID = rnd(); }
+
+            /* ---------- 1) مزامنة البيانات ---------- */
+            const dataRef = db.collection('platform').doc('main');
+            let cloudReady = false, lastRev = 0, pushT = null, dirty = false, pushing = false;
+
+            function rerender() {
+                try {
+                    if (!currentUser) return;
+                    const mine = (appData.users || []).concat(appData.students || []).find(x => String(x.email).toLowerCase() === String(currentUser.email).toLowerCase());
+                    if (mine) currentUser = mine;
+                    if (isAdminActive()) { renderClassesList(); renderStudentsTable(); }
+                    else if (document.getElementById('student-dashboard').style.display === 'flex') renderStudentProfile(currentUser.email);
+                } catch (e) { console.error(e); }
+            }
+
+            async function pushNow() {
+                if (!cloudReady || pushing) return;
+                pushing = true; dirty = false;
+                try {
+                    const rev = Date.now();
+                    await dataRef.set({ json: JSON.stringify(appData), rev: rev, by: DEVICE_ID });
+                    lastRev = rev;
+                } catch (e) { dirty = true; console.warn('تعذّرت المزامنة، ستتم إعادة المحاولة', e); }
+                pushing = false;
+            }
+            function schedulePush() { dirty = true; clearTimeout(pushT); pushT = setTimeout(pushNow, 800); }
+
+            // كل حفظ محلي يُرسل أيضاً إلى السحابة
+            const _origFlush = window.flushSave;
+            window.flushSave = function () { _origFlush.apply(this, arguments); if (cloudReady) schedulePush(); };
+
+            dataRef.onSnapshot(snap => {
+                if (snap.metadata.hasPendingWrites) return;
+                if (!snap.exists) { cloudReady = true; pushNow(); return; }   // أول جهاز: يرفع بياناته
+                const d = snap.data();
+                const first = !cloudReady;
+                cloudReady = true;
+                if (d.by === DEVICE_ID && !first) return;
+                if (!first && d.rev <= lastRev) return;
+                try {
+                    const remote = JSON.parse(d.json);
+                    if (!remote || !remote.students) return;
+                    lastRev = d.rev;
+                    appData = remote;
+                    try { localStorage.setItem('quran_univ_v9', JSON.stringify(appData)); } catch (e) { }
+                    rerender();
+                    showToast(first ? 'تم تحميل أحدث البيانات' : 'تم تحديث البيانات من جهاز آخر');
+                } catch (e) { console.error('بيانات سحابية تالفة', e); }
+            }, err => console.warn('Firestore:', err));
+
+            window.addEventListener('online', () => { if (dirty) schedulePush(); });
+            setInterval(() => { if (dirty && navigator.onLine) pushNow(); }, 30000);
+
+            /* ---------- 2) جلسة واحدة لكل حساب ---------- */
+            let mySid = null, sessUnsub = null;
+            function sessRef(email) { return db.collection('sessions').doc(String(email).toLowerCase()); }
+
+            function claimSession(email) {
+                releaseSession(false);
+                mySid = rnd();
+                const ref = sessRef(email);
+                ref.set({ sid: mySid, device: DEVICE_ID, at: Date.now() }).catch(e => console.warn(e));
+                sessUnsub = ref.onSnapshot(snap => {
+                    if (!snap.exists || snap.metadata.hasPendingWrites) return;
+                    const s = snap.data();
+                    if (mySid && s.sid !== mySid && currentUser) {
+                        mySid = null;
+                        logout();
+                        showToast('تم تسجيل الخروج: فُتح حسابك على جهاز آخر');
+                    }
+                });
+            }
+            function releaseSession(clearDoc) {
+                if (sessUnsub) { sessUnsub(); sessUnsub = null; }
+                if (clearDoc && mySid && currentUser) {
+                    const email = currentUser.email, sid = mySid;
+                    sessRef(email).get().then(s => { if (s.exists && s.data().sid === sid) sessRef(email).delete(); }).catch(() => { });
+                }
+                mySid = null;
+            }
+
+            const _origShow = window.showDashboardForRole;
+            window.showDashboardForRole = function () {
+                _origShow.apply(this, arguments);
+                if (currentUser) claimSession(currentUser.email);
+            };
+            const _origLogout = window.logout;
+            window.logout = function () { releaseSession(true); _origLogout.apply(this, arguments); };
+        })();
+    </script>
+
 </body>
 
 </html>
