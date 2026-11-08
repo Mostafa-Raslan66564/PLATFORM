@@ -221,23 +221,24 @@
         }
     </style>
     <script>
-        window.FALLBACK_AVATAR = "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="32" fill="#2d6a4f"/><circle cx="32" cy="25" r="11" fill="#d4af37"/><path d="M10 58c3-14 13-20 22-20s19 6 22 20z" fill="#d4af37"/></svg>');
+        window.LOGO_URL = "https://i.postimg.cc/RVhDSGFw/sh%CA%BFar.png";
+        window.FALLBACK_AVATAR = "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="32" fill="#1e4fa3"/><circle cx="32" cy="25" r="11" fill="#f5a524"/><path d="M10 58c3-14 13-20 22-20s19 6 22 20z" fill="#f5a524"/></svg>');
     </script>
 
     <style>
         :root {
-            --bg-color: #f4f7f6;
+            --bg-color: #f3f6fb;
             --card-bg: #ffffff;
             --text-color: #2c3e50;
             --text-muted: #7f8c8d;
-            --primary-color: #1b4332;
-            --secondary-color: #2d6a4f;
-            --accent-color: #d4af37;
+            --primary-color: #0b2a5b;
+            --secondary-color: #1e4fa3;
+            --accent-color: #f5a524;
             --danger-color: #dc2626;
-            --border-color: #e0e0e0;
-            --header-bg: #1b4332;
+            --border-color: #e3e8f0;
+            --header-bg: #0b2a5b;
             --header-text: #ffffff;
-            --table-hover: #f1f8f5;
+            --table-hover: #eef3fb;
             --shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         }
 
@@ -246,14 +247,14 @@
             --card-bg: #1e293b;
             --text-color: #f8fafc;
             --text-muted: #94a3b8;
-            --primary-color: #065f46;
-            --secondary-color: #047857;
+            --primary-color: #1e4fa3;
+            --secondary-color: #2b63c4;
             --accent-color: #fbbf24;
             --danger-color: #ef4444;
             --border-color: #334155;
             --header-bg: #0f172a;
             --header-text: #f8fafc;
-            --table-hover: #134e4a;
+            --table-hover: #16264a;
             --shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
 
@@ -284,7 +285,7 @@
         }
 
         .toast {
-            background: #1b4332;
+            background: #0b2a5b;
             color: #fff;
             padding: 12px 20px;
             border-radius: 8px;
@@ -715,7 +716,7 @@
 
         .badge-paid {
             background: #d1fae5;
-            color: #065f46;
+            color: #1e4fa3;
         }
 
         .badge-unpaid {
@@ -1160,6 +1161,40 @@
             align-items: center
         }
     </style>
+
+    <style>
+        /* ===== هوية بصرية على نمط بوابة الجامعة: شريط جانبي كحلي + ذهبي ===== */
+        [data-theme="dark"] { --header-bg: #071a38; --bg-color: #0b1220; --card-bg: #111c33; --border-color: #22304d; }
+        .platform-logo { object-fit: contain; background: #fff; border-radius: 12px; padding: 4px; }
+        .table-container, .hero-banner { border-radius: 14px; }
+        .btn-theme, .btn-logout, .btn-notify { border-radius: 10px; }
+
+        @media (min-width: 901px) {
+            .mobile-menu-btn { display: none !important; }
+            body { padding-right: 270px; }
+            header {
+                position: fixed; top: 0; right: 0; bottom: 0; width: 270px; z-index: 50;
+                flex-direction: column; align-items: stretch; justify-content: flex-start;
+                padding: 0; overflow-y: auto; box-shadow: -4px 0 18px rgba(0, 0, 0, 0.15);
+            }
+            .logo-area {
+                flex-direction: column; align-items: center; text-align: center; gap: 10px;
+                padding: 26px 16px 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            }
+            .logo-area h2 { font-size: 1.15rem; line-height: 1.5; color: var(--accent-color); }
+            .platform-logo { width: 96px; height: 96px; }
+            .header-controls { flex-direction: column; align-items: stretch; gap: 6px; padding: 16px 14px; flex: 1; }
+            .header-controls button {
+                width: 100%; justify-content: flex-start; background: transparent; border: 0;
+                padding: 12px 14px; font-size: 0.98rem;
+            }
+            .header-controls button:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+            .header-controls .btn-logout { margin-top: auto; color: #ffb4b4; }
+            .notify-badge { top: 8px; right: auto; left: 12px; }
+            footer { margin-right: 0; }
+        }
+    </style>
+
 </head>
 
 <body data-theme="light">
@@ -1168,8 +1203,8 @@
 
     <header>
         <div class="logo-area">
-            <img src="./شعار.png" class="platform-logo" alt="شعار المنصة"
-                onerror="this.onerror=null;this.src=FALLBACK_AVATAR">
+            <img src="https://i.postimg.cc/RVhDSGFw/sh%CA%BFar.png" class="platform-logo" alt="شعار المنصة"
+                onerror="this.onerror=function(){this.onerror=null;this.src=FALLBACK_AVATAR};this.src='./شعار.png'">
             <h2>منصة بالقرآن نحيا</h2>
             <span class="net-badge" id="net-badge">متصل بالإنترنت</span>
         </div>
@@ -1458,7 +1493,7 @@
             <div class="card" style="max-width: 850px; margin: 0 auto; width: 100%;">
                 <div
                     style="display: flex; align-items: center; gap: 18px; margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 15px;">
-                    <img id="p-avatar" src="./شعار.png" alt="صورة الشخص"
+                    <img id="p-avatar" src="https://i.postimg.cc/RVhDSGFw/sh%CA%BFar.png" alt="صورة الشخص"
                         style="width: 75px; height: 75px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent-color);">
                     <div>
                         <h3 id="p-name" style="margin-bottom: 4px;">-</h3>
@@ -2123,6 +2158,7 @@
 
         function imgSrc(u) {
             u = String(u || '').trim();
+            if (u === 'شعار.png') return LOGO_URL;
             return /^(https?:\/\/|data:|\.\/|\/)/i.test(u) || !u ? u : './' + u;
         }
 
@@ -3163,7 +3199,7 @@
                     ${cleanPhone ? `<a href="https://wa.me/${cleanPhone}" target="_blank" rel="noopener" class="btn-comm btn-whatsapp" title="واتساب"><i class="fa-brands fa-whatsapp"></i></a>` : ''}
                 </div></td>
                 <td data-label="الإدارة">
-                    <button class="btn-action" onclick="openEditStudent(${index})" style="padding: 3px 6px; font-size: 0.75rem; background:#2d6a4f;" title="تعديل"><i class="fa-solid fa-pen"></i></button>
+                    <button class="btn-action" onclick="openEditStudent(${index})" style="padding: 3px 6px; font-size: 0.75rem; background:#1e4fa3;" title="تعديل"><i class="fa-solid fa-pen"></i></button>
                     <button class="btn-comm btn-delete" onclick="moveToTrash(${index})" title="حذف"><i class="fa-solid fa-trash"></i></button>
                 </td></tr>`;
         }
