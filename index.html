@@ -190,6 +190,35 @@
         .fa-whatsapp {
             --fa: "\f232"
         }
+    
+        /* ===== الهاتف: القائمة + بطاقات الطلاب ===== */
+        @media (max-width: 900px) {
+            header { padding: 10px 15px; flex-wrap: wrap; }
+            .header-controls { display: none !important; }
+            .mobile-menu-btn { display: flex; }
+            .net-badge { display: none; }
+
+            #admin-dashboard .table-container>table.students-table { min-width: 0; }
+            .table-container { overflow-x: visible; background: transparent; border: 0; box-shadow: none; }
+            .students-table, .students-table tbody { display: block; width: 100%; }
+            .students-table thead { display: none; }
+            .students-table tr {
+                display: grid; grid-template-columns: 56px 1fr; gap: 2px 12px;
+                margin: 0 0 12px; padding: 14px; border-radius: 14px;
+                background: var(--card-bg); border: 1px solid var(--border-color); box-shadow: var(--shadow);
+            }
+            .students-table td { display: block; padding: 5px 0; border: 0; font-size: 0.9rem; text-align: right; }
+            .students-table td:nth-child(2) { grid-column: 1; grid-row: 1 / span 2; align-self: center; }
+            .students-table td:nth-child(3) { grid-column: 2; grid-row: 1; font-size: 1.05rem; align-self: end; }
+            .students-table td:nth-child(4) { grid-column: 2; grid-row: 2; min-width: 0; align-self: start; color: var(--muted-color, #6b7280); }
+            .students-table td:nth-child(1) { grid-column: 1 / -1; grid-row: 3; }
+            .students-table td:nth-child(n+5), .students-table td:nth-child(1) {
+                grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; gap: 12px;
+                border-top: 1px dashed var(--border-color);
+            }
+            .students-table td[data-label]::before { content: attr(data-label); font-weight: 700; font-size: 0.8rem; opacity: 0.7; flex-shrink: 0; }
+            .students-table .avatar-img { width: 52px; height: 52px; }
+        }
     </style>
     <script>
         window.FALLBACK_AVATAR = "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="32" fill="#2d6a4f"/><circle cx="32" cy="25" r="11" fill="#d4af37"/><path d="M10 58c3-14 13-20 22-20s19 6 22 20z" fill="#d4af37"/></svg>');
@@ -1388,7 +1417,7 @@
             </div>
 
             <div class="table-container">
-                <table>
+                <table class="students-table">
                     <thead>
                         <tr>
                             <th>الآدي (ID)</th>
@@ -3119,21 +3148,21 @@
             const tip = [st.goal ? 'يريد: ' + st.goal : '', st.help ? 'المساعدة: ' + st.help : '', st.location ? 'الإقامة: ' + st.location : ''].filter(Boolean).join('\n');
             const avatar = safeUrl(st.avatar) || 'شعار.png';
             return `<tr>
-                <td><strong>${esc(st.id || 'QURAN-1000')}</strong></td>
+                <td data-label="المعرّف"><strong>${esc(st.id || 'QURAN-1000')}</strong></td>
                 <td><img src="${esc(imgSrc(avatar))}" class="avatar-img" alt="صورة" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src=FALLBACK_AVATAR"></td>
                 <td><strong title="${esc(tip)}">${esc(st.name)}</strong>${age ? ` <span class="muted-small">(${age} سنة)</span>` : ''}</td>
                 <td class="cell-email">${st.email ? esc(st.email) : '<span class="muted-small">لا يوجد</span>'}</td>
-                <td><span class="badge badge-class">${esc(st.className || 'غير معين')}</span></td>
-                <td>${gradeDisplay}</td>
-                <td style="font-size:0.85rem;">${esc(memoText(st))}</td>
-                <td class="cell-phone">${cleanPhone ? esc(st.phone) : '<span class="muted-small">' + (st.noPhone ? 'لا يوجد' : '-') + '</span>'}</td>
-                <td>${payBadge}</td>
-                <td>${blockBadge}</td>
-                <td><div class="comm-btns">
+                <td data-label="الصف / الحلقة"><span class="badge badge-class">${esc(st.className || 'غير معين')}</span></td>
+                <td data-label="العلامة">${gradeDisplay}</td>
+                <td data-label="الحفظ / التجويد" style="font-size:0.85rem;">${esc(memoText(st))}</td>
+                <td data-label="الهاتف" class="cell-phone">${cleanPhone ? esc(st.phone) : '<span class="muted-small">' + (st.noPhone ? 'لا يوجد' : '-') + '</span>'}</td>
+                <td data-label="سداد الشهر">${payBadge}</td>
+                <td data-label="حالة الحساب">${blockBadge}</td>
+                <td data-label="التواصل"><div class="comm-btns">
                     ${st.email ? `<a href="mailto:${esc(st.email)}" class="btn-comm btn-email" title="إيميل"><i class="fa-solid fa-envelope"></i></a>` : ''}
                     ${cleanPhone ? `<a href="https://wa.me/${cleanPhone}" target="_blank" rel="noopener" class="btn-comm btn-whatsapp" title="واتساب"><i class="fa-brands fa-whatsapp"></i></a>` : ''}
                 </div></td>
-                <td>
+                <td data-label="الإدارة">
                     <button class="btn-action" onclick="openEditStudent(${index})" style="padding: 3px 6px; font-size: 0.75rem; background:#2d6a4f;" title="تعديل"><i class="fa-solid fa-pen"></i></button>
                     <button class="btn-comm btn-delete" onclick="moveToTrash(${index})" title="حذف"><i class="fa-solid fa-trash"></i></button>
                 </td></tr>`;
