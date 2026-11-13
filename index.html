@@ -5735,7 +5735,7 @@
     <script id="portal-js">
         (function () {
             'use strict';
-            const SYNC_DB_URL = ''; /* ضع هنا رابط قاعدة Firebase Realtime Database ليعمل التزامن الجماعي على كل الأجهزة */
+            const SYNC_DB_URL = 'https://platform-ac62f-default-rtdb.firebaseio.com'; /* ضع هنا رابط قاعدة Firebase Realtime Database ليعمل التزامن الجماعي على كل الأجهزة */
             const $ = id => document.getElementById(id);
             const isAdm = () => !!currentUser && (isOwner() || hasStaffAccess(currentUser));
             const myRec = () => currentUser && appData.students.find(s => lc(s.email) === lc(currentUser.email));
@@ -5907,24 +5907,25 @@
 
     </script>
     <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.x.x/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.x.x/firebase-analytics.js";
-
-        // Your web app's Firebase configuration
+        /* إعداد Firebase (الاتصال بقاعدة البيانات يتم عبر نظام المزامنة أعلاه، وهذا لتهيئة المشروع والتحليلات) */
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
         const firebaseConfig = {
             apiKey: "AIzaSyAvEUiZ0hse2O1gDUhgN26yj6juNRXvdZY",
             authDomain: "platform-ac62f.firebaseapp.com",
+            databaseURL: "https://platform-ac62f-default-rtdb.firebaseio.com",
             projectId: "platform-ac62f",
             storageBucket: "platform-ac62f.firebasestorage.app",
             messagingSenderId: "540766277775",
             appId: "1:540766277775:web:e85c531a728824d23de0fa",
             measurementId: "G-25VGZRD6H0"
         };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
+        try {
+            const app = initializeApp(firebaseConfig);
+            window.firebaseApp = app;
+            import("https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics.js")
+                .then(m => { try { m.getAnalytics(app); } catch (e) { } })
+                .catch(() => { });
+        } catch (e) { console.warn('Firebase init failed', e); }
     </script>
 </body>
 
