@@ -5883,9 +5883,10 @@
             const dec = o => Array.isArray(o) ? o.map(dec) : (o && typeof o === 'object' ? Object.fromEntries(Object.entries(o).map(([k, v]) => [k.replace(/%2E|%24|%23|%5B|%5D|%2F/g, m => UNK[m]), dec(v)])) : o);
             function syncUrl() { return String(SYNC_DB_URL || localStorage.getItem('qu_sync') || '').trim().replace(/\/$/, ''); }
             let _app = false, _my = 0, _pt, _es;
-            function setSync(m) { const t = !syncUrl() ? 'التزامن: غير مفعّل' : m === 'err' ? 'التزامن: تعذّر الاتصال' : 'التزامن: مفعّل ✓'; const a = $('pv-sync'); if (a) a.innerText = t; const b = $('pv-sync-st'); if (b) b.innerText = t; }
+            function setSync(m) { const t = !syncUrl() ? 'التزامن: غير مفعّل' : m ? 'التزامن: تعذّر الاتصال — ' + (m === 'err' ? 'تحقق من الإنترنت' : m) : 'التزامن: مفعّل ✓'; const a = $('pv-sync'); if (a) a.innerText = t; const b = $('pv-sync-st'); if (b) b.innerText = t; }
             function norm(x) { ['users', 'classes', 'students', 'trash', 'classwork', 'stream'].forEach(k => { if (!Array.isArray(x[k])) x[k] = x[k] ? Object.values(x[k]) : []; });['inbox', 'creds'].forEach(k => { if (!x[k]) x[k] = {}; }); return x; }
-            async function push() { const u = syncUrl(); if (!u || _app) return; try { await fetch(u + '/qu/data.json', { method: 'PUT', body: JSON.stringify(enc(appData)) }); setSync(); } catch (e) { setSync('err'); } }
+            async function chk(r) { if (r.ok) return; let m = 'خطأ ' + r.status; if (r.status === 401 || r.status === 403) m = 'القواعد (Rules) ترفض الوصول - انشر قواعد القراءة والكتابة'; else if (r.status === 404) m = 'القاعدة غير موجودة أو الرابط غير صحيح'; throw new Error(m); }
+            async function push() { const u = syncUrl(); if (!u || _app) return; try { const r = await fetch(u + '/qu/data.json', { method: 'PUT', body: JSON.stringify(enc(appData)) }); await chk(r); setSync(); } catch (e) { setSync(e.message || 'err'); } }
             const _fs = window.flushSave; window.flushSave = function () { if (syncUrl() && !_app) { appData._rev = _my = Date.now(); } _fs.apply(this, arguments); if (syncUrl() && !_app) { clearTimeout(_pt); _pt = setTimeout(push, 700); } };
             function applyRemote(r) {
                 _app = true; const seen = new Set(myInbox().map(n => n.id)); appData = norm(r); try { localStorage.setItem('quran_univ_v9', JSON.stringify(appData)); } catch (e) { } _app = false;
@@ -5893,7 +5894,7 @@
                 myInbox().filter(n => !n.read && !seen.has(n.id)).reverse().forEach(deliver); refreshBell(); renderNotifications();
                 if (currentUser) { if (isAdm()) { renderClassesList(); renderStudentsTable(); } else renderStudentProfile(currentUser.email); if (_roomOpen) renderClassroom(); if (document.body.dataset.view === 'home') renderHome(); } else buildBrowse();
             }
-            async function pull() { const u = syncUrl(); if (!u) return; try { const r = await fetch(u + '/qu/data.json'), d = await r.json(); setSync(); if (!d) { push(); return; } const rm = dec(d); if ((rm._rev || 0) > (appData._rev || 0) && rm._rev !== _my) applyRemote(rm); else if ((rm._rev || 0) < (appData._rev || 0)) { clearTimeout(_pt); _pt = setTimeout(push, 300); } } catch (e) { setSync('err'); } }
+            async function pull() { const u = syncUrl(); if (!u) return; try { const r = await fetch(u + '/qu/data.json'); await chk(r); const d = await r.json(); setSync(); if (!d) { push(); return; } const rm = dec(d); if ((rm._rev || 0) > (appData._rev || 0) && rm._rev !== _my) applyRemote(rm); else if ((rm._rev || 0) < (appData._rev || 0)) { clearTimeout(_pt); _pt = setTimeout(push, 300); } } catch (e) { setSync(e.message || 'err'); } }
             function startSync() { const u = syncUrl(); if (!u) return; pull(); try { if (_es) _es.close(); _es = new EventSource(u + '/qu/data.json'); let t; const go = () => { clearTimeout(t); t = setTimeout(pull, 400); }; _es.addEventListener('put', go); _es.addEventListener('patch', go); } catch (e) { } }
             setInterval(pull, 30000); document.addEventListener('visibilitychange', () => { if (!document.hidden) pull(); });
             window.pvSaveSync = function () { const v = ($('pv-sync-url').value || '').trim(); localStorage.setItem('qu_sync', v); startSync(); setSync(); showToast(v ? 'تم تشغيل المزامنة' : 'تم إيقاف المزامنة'); };
