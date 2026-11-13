@@ -5927,6 +5927,27 @@
                 .then(m => { try { m.getAnalytics(app); } catch (e) { } })
                 .catch(() => { });
         } catch (e) { console.warn('Firebase init failed', e); }
+        // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyAvEUiZ0hse2O1gDUhgN26yj6juNRXvdZY",
+  authDomain: "platform-ac62f.firebaseapp.com",
+  projectId: "platform-ac62f",
+  storageBucket: "platform-ac62f.firebasestorage.app",
+  messagingSenderId: "540766277775",
+  appId: "1:540766277775:web:e85c531a728824d23de0fa",
+  measurementId: "G-25VGZRD6H0"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
     </script>
 </body>
 
