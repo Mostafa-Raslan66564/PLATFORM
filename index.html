@@ -2,6 +2,8 @@
 <html lang="ar" dir="rtl">
 
 <head>
+<style>html.has-sess #guest-view{display:none!important}</style>
+<script>try{if(localStorage.getItem("qu_session")||/(?:^|; )qu_session=/.test(document.cookie))document.documentElement.classList.add("has-sess")}catch(e){}</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -3974,6 +3976,7 @@
             if (!window.crypto || !crypto.subtle) { showToast('المتصفح لا يدعم التشفير. افتح الموقع عبر https'); return; }
             const email = document.getElementById('login-email').value.trim().toLowerCase();
             const pass = document.getElementById('login-password').value;
+            try { if (window.__pullNow) await Promise.race([window.__pullNow(), new Promise(r => setTimeout(r, 2500))]); } catch (e) { }
             const user = findAccount(email);
             let ok = false, must = false;
             if (user) {
@@ -4906,7 +4909,7 @@
         }
         async function setCred(email, pass, must) {
             const salt = _hex(crypto.getRandomValues(new Uint8Array(16)));
-            (appData.creds || (appData.creds = {}))[String(email).toLowerCase()] = { salt, hash: await pbkdf2(pass, salt), must: !!must };
+            (appData.creds || (appData.creds = {}))[String(email).toLowerCase()] = { salt, hash: await pbkdf2(pass, salt), must: !!must, t: Date.now() };
         }
         function findAccount(email) {
             if (!email) return null;
@@ -5730,7 +5733,12 @@
     <script id="portal-js">
         (function () {
             'use strict';
-            const SYNC_DB_URL = 'https://platform-ac62f-default-rtdb.firebaseio.com'; /* ضع هنا رابط قاعدة Firebase Realtime Database ليعمل التزامن الجماعي على كل الأجهزة */
+/* ---------- الجلسة الدائمة (تبقى حتى الضغط على تسجيل الخروج) ---------- */
+            function getSess() { try { const v = localStorage.getItem('qu_session'); if (v) return v; } catch (e) { } const m = document.cookie.match(/(?:^|; )qu_session=([^;]*)/); return m ? decodeURIComponent(m[1]) : null; }
+            function setSess(v) { try { localStorage.setItem('qu_session', v); } catch (e) { } try { document.cookie = 'qu_session=' + encodeURIComponent(v) + '; max-age=31536000; path=/; SameSite=Lax'; } catch (e) { } }
+            function clrSess() { try { localStorage.removeItem('qu_session'); } catch (e) { } try { document.cookie = 'qu_session=; max-age=0; path=/'; } catch (e) { } }
+            try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) { }
+            const SYNC_DB_URL = 'https://platform-ac62f-default-rtdb.firebaseio.com';
             const $ = id => document.getElementById(id);
             const isAdm = () => !!currentUser && (isOwner() || hasStaffAccess(currentUser));
             const myRec = () => currentUser && appData.students.find(s => lc(s.email) === lc(currentUser.email));
@@ -5806,8 +5814,8 @@
             }
             function offPortal() { document.body.classList.remove('in-portal'); delete document.body.dataset.view; pvSide(false); }
             /* ---------- الجلسة: لا تسجيل خروج إلا بتأكيد ---------- */
-            const _sd = window.showDashboardForRole; window.showDashboardForRole = function () { const r = _sd.apply(this, arguments); try { localStorage.setItem('qu_session', currentUser.email) } catch (e) { } onPortal(); return r; };
-            const _lo = window.logout; window.logout = function () { if (!confirm('هل تريد تسجيل الخروج من هذا الحساب؟')) return; try { localStorage.removeItem('qu_session') } catch (e) { } _lo.apply(this, arguments); offPortal(); buildBrowse(); };
+            const _sd = window.showDashboardForRole; window.showDashboardForRole = function () { try { setSess(currentUser.email) } catch (e) { } const r = _sd.apply(this, arguments); document.documentElement.classList.remove('has-sess'); onPortal(); return r; };
+            const _lo = window.logout; window.logout = function () { if (!confirm('هل تريد تسجيل الخروج من هذا الحساب؟')) return; clrSess(); document.documentElement.classList.remove('has-sess'); _lo.apply(this, arguments); offPortal(); buildBrowse(); };
             /* ---------- الرفع بالسحب فقط ---------- */
             function tuneIntake() {
                 const st = document.querySelector('#intake-card'); if (!st) return; const t = st.previousElementSibling; if (t) t.innerHTML = '<i class="fa-solid fa-file-arrow-up"></i> رفع الملفات (اسحب وأفلت)';
@@ -5874,27 +5882,77 @@
             const enc = o => Array.isArray(o) ? o.map(enc) : (o && typeof o === 'object' ? Object.fromEntries(Object.entries(o).map(([k, v]) => [k.replace(/[.$#\[\]\/]/g, c => ESCK[c]), enc(v)])) : (o === undefined ? null : o));
             const dec = o => Array.isArray(o) ? o.map(dec) : (o && typeof o === 'object' ? Object.fromEntries(Object.entries(o).map(([k, v]) => [k.replace(/%2E|%24|%23|%5B|%5D|%2F/g, m => UNK[m]), dec(v)])) : o);
             function syncUrl() { return String(SYNC_DB_URL || localStorage.getItem('qu_sync') || '').trim().replace(/\/$/, ''); }
-            let _app = false, _my = 0, _pt, _es;
+            let _app = false, _my = 0, _pt, _es, _esT, _base = 0, _pulled = false, _retry = 0, _dirty = false, _pulling = null;
             function setSync(m) { const t = !syncUrl() ? 'التزامن: غير مفعّل' : m ? 'التزامن: تعذّر الاتصال — ' + (m === 'err' ? 'تحقق من الإنترنت' : m) : 'التزامن: مفعّل ✓'; const a = $('pv-sync'); if (a) a.innerText = t; const b = $('pv-sync-st'); if (b) b.innerText = t; }
             function norm(x) { ['users', 'classes', 'students', 'trash', 'classwork', 'stream'].forEach(k => { if (!Array.isArray(x[k])) x[k] = x[k] ? Object.values(x[k]) : []; });['inbox', 'creds'].forEach(k => { if (!x[k]) x[k] = {}; }); return x; }
             async function chk(r) { if (r.ok) return; let m = 'خطأ ' + r.status; if (r.status === 401 || r.status === 403) m = 'القواعد (Rules) ترفض الوصول - انشر قواعد القراءة والكتابة'; else if (r.status === 404) m = 'القاعدة غير موجودة أو الرابط غير صحيح'; throw new Error(m); }
-            async function push() { const u = syncUrl(); if (!u || _app) return; try { const r = await fetch(u + '/qu/data.json', { method: 'PUT', body: JSON.stringify(enc(appData)) }); await chk(r); setSync(); } catch (e) { setSync(e.message || 'err'); } }
-            const _fs = window.flushSave; window.flushSave = function () { if (syncUrl() && !_app) { appData._rev = _my = Date.now(); } _fs.apply(this, arguments); if (syncUrl() && !_app) { clearTimeout(_pt); _pt = setTimeout(push, 700); } };
+            function credMerge(a, b) { const o = Object.assign({}, a || {}); Object.keys(b || {}).forEach(k => { const x = o[k], y = b[k]; if (!x || (y && (y.t || 0) > (x.t || 0))) o[k] = y; }); return o; }
+            function mergeData(loc, rem) {
+                const m = Object.assign({}, rem), goneIds = new Set((rem.trash || []).map(t => t && t.id).filter(Boolean)), goneMail = new Set((rem.deletedEmails || []).concat((rem.trash || []).map(t => t && t.email)).map(e => String(e || '').toLowerCase()).filter(Boolean));
+                const key = x => x && (x.id || (x.email && String(x.email).toLowerCase()) || x.name);
+                ['students', 'users', 'classes', 'classwork', 'stream'].forEach(k => {
+                    const R = Array.isArray(rem[k]) ? rem[k] : Object.values(rem[k] || {}), L = Array.isArray(loc[k]) ? loc[k] : [], mp = new Map(R.map(x => [key(x), x]));
+                    L.forEach(x => { const kk = key(x); if (kk == null) return; if (mp.has(kk)) mp.set(kk, x); else if (!goneIds.has(x.id) && !goneMail.has(String(x.email || '').toLowerCase())) mp.set(kk, x); });
+                    m[k] = Array.from(mp.values());
+                });
+                const tm = new Map(); (rem.trash || []).concat(loc.trash || []).forEach(t => { if (t) tm.set((t.id || t.email) + '|' + t.deletedAt, t); }); m.trash = Array.from(tm.values());
+                m.creds = credMerge(loc.creds, rem.creds);
+                const ib = Object.assign({}, rem.inbox || {}); Object.keys(loc.inbox || {}).forEach(e => { const a = Array.isArray(ib[e]) ? ib[e] : Object.values(ib[e] || {}), seen = new Set(a.map(n => n && n.id)); (Array.isArray(loc.inbox[e]) ? loc.inbox[e] : Object.values(loc.inbox[e] || {})).forEach(n => { if (n && !seen.has(n.id)) a.push(n); }); ib[e] = a; }); m.inbox = ib;
+                return m;
+            }
+            function schedPush(ms) { clearTimeout(_pt); _pt = setTimeout(push, ms); }
+            async function push() {
+                const u = syncUrl(); if (!u || _app) return;
+                if (!_pulled) { schedPush(1500); pull(); return; } /* لا نكتب فوق السحابة قبل قراءتها */
+                if (!navigator.onLine) { _dirty = true; setSync('لا يوجد اتصال — سيُرسل تلقائياً عند عودته'); return; }
+                try {
+                    const rr = await fetch(u + '/qu/data/_rev.json', { cache: 'no-store' }); await chk(rr); const remRev = await rr.json();
+                    if (remRev && remRev > _base && remRev !== appData._rev) { await pull(); if (_dirty) schedPush(500); return; } /* جهاز آخر كتب قبلنا: ادمج أولاً */
+                    const r = await fetch(u + '/qu/data.json', { method: 'PUT', body: JSON.stringify(enc(appData)) }); await chk(r);
+                    _base = appData._rev || _base; _dirty = false; _retry = 0; setSync();
+                } catch (e) { _dirty = true; setSync(e.message || 'err'); if (!/القواعد|غير موجودة/.test(e.message || '')) { _retry = Math.min(_retry + 1, 6); schedPush(Math.min(60000, 2000 * Math.pow(2, _retry))); } }
+            }
+            const _fs = window.flushSave; window.flushSave = function () { if (syncUrl() && !_app) { appData._rev = _my = Date.now(); _dirty = true; } _fs.apply(this, arguments); if (syncUrl() && !_app) schedPush(700); };
             function applyRemote(r) {
                 _app = true; const seen = new Set(myInbox().map(n => n.id)); appData = norm(r); try { localStorage.setItem('quran_univ_v9', JSON.stringify(appData)); } catch (e) { } _app = false;
                 if (currentUser) { const u = findAccount(currentUser.email); if (u) currentUser = u; }
                 myInbox().filter(n => !n.read && !seen.has(n.id)).reverse().forEach(deliver); refreshBell(); renderNotifications();
                 if (currentUser) { if (isAdm()) { renderClassesList(); renderStudentsTable(); } else renderStudentProfile(currentUser.email); if (_roomOpen) renderClassroom(); if (document.body.dataset.view === 'home') renderHome(); } else buildBrowse();
             }
-            async function pull() { const u = syncUrl(); if (!u) return; try { const r = await fetch(u + '/qu/data.json'); await chk(r); const d = await r.json(); setSync(); if (!d) { push(); return; } const rm = dec(d); if ((rm._rev || 0) > (appData._rev || 0) && rm._rev !== _my) applyRemote(rm); else if ((rm._rev || 0) < (appData._rev || 0)) { clearTimeout(_pt); _pt = setTimeout(push, 300); } } catch (e) { setSync(e.message || 'err'); } }
-            function startSync() { const u = syncUrl(); if (!u) return; pull(); try { if (_es) _es.close(); _es = new EventSource(u + '/qu/data.json'); let t; const go = () => { clearTimeout(t); t = setTimeout(pull, 400); }; _es.addEventListener('put', go); _es.addEventListener('patch', go); } catch (e) { } }
-            setInterval(pull, 30000); document.addEventListener('visibilitychange', () => { if (!document.hidden) pull(); });
+            function pull() {
+                if (_pulling) return _pulling;
+                return _pulling = (async () => {
+                    const u = syncUrl(); if (!u) return;
+                    try {
+                        const r = await fetch(u + '/qu/data.json', { cache: 'no-store' }); await chk(r); const d = await r.json(); setSync();
+                        if (!d) { _pulled = true; _base = 0; push(); return; }
+                        const rm = norm(dec(d)), rr = rm._rev || 0, lr = appData._rev || 0; _pulled = true;
+                        if (_dirty && rr > _base && rr !== lr) { /* تعديل محلي غير مُرسل + تعديل من جهاز آخر: دمج */
+                            const mg = norm(mergeData(appData, rm)); mg._rev = _my = Date.now(); _base = rr; applyRemote(mg); _dirty = true; schedPush(200); return;
+                        }
+                        if (rr > lr && rr !== _my) {
+                            const mc = credMerge(appData.creds, rm.creds), diff = JSON.stringify(mc) !== JSON.stringify(rm.creds); rm.creds = mc; _base = rr; applyRemote(rm);
+                            if (diff) { _dirty = true; window.flushSave(); }
+                        } else if (rr < lr) { _base = rr; _dirty = true; schedPush(300); }
+                        else _base = rr;
+                    } catch (e) { setSync(e.message || 'err'); }
+                    finally { _pulling = null; }
+                })();
+            }
+            window.__pullNow = pull;
+            function openStream() { const u = syncUrl(); if (!u) return; try { if (_es) _es.close(); _es = new EventSource(u + '/qu/data/_rev.json'); let t; const go = () => { clearTimeout(t); t = setTimeout(pull, 400); }; _es.addEventListener('put', go); _es.addEventListener('patch', go); _es.onerror = () => { if (_es && _es.readyState === 2) { clearTimeout(_esT); _esT = setTimeout(openStream, 5000); } }; } catch (e) { } }
+            function startSync() { const u = syncUrl(); if (!u) return; pull(); openStream(); }
+            setInterval(() => { if (_dirty) push(); else pull(); }, 30000);
+            document.addEventListener('visibilitychange', () => { if (!document.hidden) { pull(); openStream(); } });
+            window.addEventListener('online', () => { pull(); if (_dirty) schedPush(300); openStream(); }); window.addEventListener('focus', () => pull());
             window.pvSaveSync = function () { const v = ($('pv-sync-url').value || '').trim(); localStorage.setItem('qu_sync', v); startSync(); setSync(); showToast(v ? 'تم تشغيل المزامنة' : 'تم إيقاف المزامنة'); };
             /* ---------- الإشعارات: شارة الجرس + إشعار عند تعديل بياناتي ---------- */
             const _rb = window.refreshBell; window.refreshBell = function () { _rb.apply(this, arguments); const e = $('pv-nbadge'), c = unreadCount(); if (e) { e.innerText = c > 99 ? '99+' : c; e.style.display = c ? '' : 'none'; } };
             /* ---------- تشغيل ---------- */
             buildBrowse();
-            const em = localStorage.getItem('qu_session'); if (em) { const u = findAccount(em); if (u) { currentUser = u; showDashboardForRole(); } }
+            /* استرجاع الجلسة: لا تُحذف أبداً إلا بالضغط على تسجيل الخروج؛ إن لم يوجد الحساب محلياً ننتظر أول مزامنة */
+            function restoreSession(n) { const em = getSess(); if (!em || currentUser) return; const u = findAccount(String(em).toLowerCase()); if (u) { currentUser = u; showDashboardForRole(); return; } if (n < 10) setTimeout(() => restoreSession(n + 1), 1500); else document.documentElement.classList.remove('has-sess'); }
+            restoreSession(0);
             startSync();
         })();
 
@@ -5919,27 +5977,6 @@
                 .then(m => { try { m.getAnalytics(app); } catch (e) { } })
                 .catch(() => { });
         } catch (e) { console.warn('Firebase init failed', e); }
-        // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyAvEUiZ0hse2O1gDUhgN26yj6juNRXvdZY",
-  authDomain: "platform-ac62f.firebaseapp.com",
-  projectId: "platform-ac62f",
-  storageBucket: "platform-ac62f.firebasestorage.app",
-  messagingSenderId: "540766277775",
-  appId: "1:540766277775:web:e85c531a728824d23de0fa",
-  measurementId: "G-25VGZRD6H0"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
     </script>
 </body>
 
