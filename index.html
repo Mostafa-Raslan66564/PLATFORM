@@ -5734,6 +5734,7 @@
         (function () {
             'use strict';
 /* ---------- الجلسة الدائمة (تبقى حتى الضغط على تسجيل الخروج) ---------- */
+            if (typeof window.buildBrowse !== 'function') window.buildBrowse = function () { }; /* كانت مفقودة وتوقف السكربت كله */
             function getSess() { try { const v = localStorage.getItem('qu_session'); if (v) return v; } catch (e) { } const m = document.cookie.match(/(?:^|; )qu_session=([^;]*)/); return m ? decodeURIComponent(m[1]) : null; }
             function setSess(v) { try { localStorage.setItem('qu_session', v); } catch (e) { } try { document.cookie = 'qu_session=' + encodeURIComponent(v) + '; max-age=31536000; path=/; SameSite=Lax'; } catch (e) { } }
             function clrSess() { try { localStorage.removeItem('qu_session'); } catch (e) { } try { document.cookie = 'qu_session=; max-age=0; path=/'; } catch (e) { } }
