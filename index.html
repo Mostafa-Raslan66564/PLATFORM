@@ -3312,8 +3312,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
                     <h3>تسجيل الدخول </h3>
                     <form onsubmit="handleLogin(event)">
                         <div class="form-group">
-                            <label><i class="fa-solid fa-envelope"></i> البريد الإلكتروني</label>
-                            <input type="email" id="login-email" required placeholder="name@example.com"
+                            <label><i class="fa-solid fa-envelope"></i> البريد الإلكتروني أو رقم الهوية (ID)</label>
+                            <input type="text" inputmode="email" id="login-email" required placeholder="name@example.com أو QURAN-1001"
                                 autocomplete="username">
                         </div>
                         <div class="form-group">
@@ -3998,12 +3998,19 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         }
 
         // دالة تسجيل الدخول المحسنة (تسمح بالدخول المباشر كأدمن أو طالب أو بريد مسجل بكلمة 123)
+        function resolveLoginId(v) {
+            v = String(v || '').trim().toLowerCase(); if (!v || v.indexOf('@') >= 0) return v;
+            const n = x => String(x || '').toLowerCase().replace(/[\s_]+/g, '-'), q = n(v), all = (appData.students || []).concat(appData.users || []);
+            let r = all.find(x => x && x.id && n(x.id) === q);
+            if (!r && /^\d+$/.test(q)) r = all.find(x => x && x.id && n(x.id).endsWith('-' + q));
+            return r && r.email ? String(r.email).trim().toLowerCase() : v;
+        }
         async function handleLogin(e) {
             e.preventDefault();
             const now = Date.now();
             if (now < _lockUntil) { showToast('محاولات كثيرة. انتظر ' + Math.ceil((_lockUntil - now) / 1000) + ' ثانية'); return; }
             if (!window.crypto || !crypto.subtle) { showToast('المتصفح لا يدعم التشفير. افتح الموقع عبر https'); return; }
-            const email = document.getElementById('login-email').value.trim().toLowerCase();
+            const email = resolveLoginId(document.getElementById('login-email').value);
             const pass = document.getElementById('login-password').value;
             try { if (window.__pullNow) await Promise.race([window.__pullNow(), new Promise(r => setTimeout(r, 2500))]); } catch (e) { }
             const user = findAccount(email);
@@ -5632,9 +5639,9 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         function sysNotify(n) {
             try {
                 if (!('Notification' in window) || Notification.permission !== 'granted' || cfg().webNotify === false) return;
-                const o = { body: n.text, tag: n.id, dir: 'rtl', lang: 'ar', vibrate: [200, 100, 200], icon: 'شعار.png' };
+                const o = { body: n.text, tag: n.id, dir: 'rtl', lang: 'ar', vibrate: [200, 100, 200], icon: window.LOGO || 'شعار.png', badge: window.LOGO || undefined, renotify: true };
                 const fb = () => { try { const x = new Notification(n.title, o); x.onclick = () => { window.focus(); x.close(); }; } catch (e) { } };
-                if ('serviceWorker' in navigator && navigator.serviceWorker.getRegistration) navigator.serviceWorker.getRegistration().then(r => (r && r.showNotification) ? r.showNotification(n.title, o) : fb()).catch(fb); else fb();
+                if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) Promise.race([navigator.serviceWorker.ready, new Promise((_, rj) => setTimeout(rj, 2500))]).then(r => r.showNotification(n.title, o)).catch(fb); else fb();
             } catch (e) { }
         }
         function deliver(n) { try { if (navigator.vibrate) navigator.vibrate([200, 100, 200]); } catch (e) { } sysNotify(n); beep(); showToast('🔔 ' + n.title); }
@@ -5768,7 +5775,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             function setSess(v) { try { localStorage.setItem('qu_session', v); } catch (e) { } try { document.cookie = 'qu_session=' + encodeURIComponent(v) + '; max-age=31536000; path=/; SameSite=Lax'; } catch (e) { } }
             function clrSess() { try { localStorage.removeItem('qu_session'); } catch (e) { } try { document.cookie = 'qu_session=; max-age=0; path=/'; } catch (e) { } }
             try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) { }
-            const SYNC_DB_URL = 'https://platform-ac62f-default-rtdb.firebaseio.com';
+            const SYNC_DB_URL = 'https://platform-ac62f-default-rtdb.firebaseio.com'; /* ضع هنا رابط قاعدة Firebase Realtime Database ليعمل التزامن الجماعي على كل الأجهزة */
             const $ = id => document.getElementById(id);
             const isAdm = () => !!currentUser && (isOwner() || hasStaffAccess(currentUser));
             const myRec = () => currentUser && appData.students.find(s => lc(s.email) === lc(currentUser.email));
