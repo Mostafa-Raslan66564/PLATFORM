@@ -2877,7 +2877,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         }
 
         body.in-portal #admin-dashboard.pv-empty,
-        body.in-portal:is([data-view=home], [data-view=cert], [data-view=set], [data-view=roles], [data-view=trash], [data-view=reset], [data-view=qr], [data-view=outbox], [data-view=course], [data-view=map]) #admin-dashboard {
+        body.in-portal:is([data-view=home], [data-view=cert], [data-view=set], [data-view=roles], [data-view=trash], [data-view=reset], [data-view=qr], [data-view=outbox], [data-view=course], [data-view=map], [data-view=tickets], [data-view=guide]) #admin-dashboard {
             display: none !important
         }
 
@@ -3298,10 +3298,30 @@ html,body{background:#fff!important}
 [data-v=students] .table-container{max-height:none!important;overflow:visible!important;border:0}
 table{width:100%!important;font-size:10pt}thead{display:table-header-group}tr{break-inside:avoid;page-break-inside:avoid}
 [data-v=students] table thead th{position:static;box-shadow:none}
-th:nth-child(2),td:nth-child(2),th:nth-child(10),td:nth-child(10),th:nth-child(11),td:nth-child(11){display:none}
+[data-v=students] th:nth-child(2),[data-v=students] td:nth-child(2),[data-v=students] th:nth-child(10),[data-v=students] td:nth-child(10),[data-v=students] th:nth-child(11),[data-v=students] td:nth-child(11){display:none}
 .pv-card{box-shadow:none!important;border:1px solid #ccc;break-inside:avoid}
 }
 
+</style>
+<style id="qu-ext2-css">
+.tk-msg{background:#f1f5f9;border-radius:10px;padding:10px 12px;margin:8px 0}.tk-msg.tk-s{background:#ecfdf5;border-inline-start:4px solid #15803d}
+body[data-view=tickets] #pv-tickets{display:block}
+
+</style>
+<style id="qu-ext3-css">
+body[data-view=guide] #pv-guide{display:block}
+.qu-guide ul{padding-inline-start:22px;line-height:2}.qu-guide p{line-height:2}.qu-guide h3{color:var(--primary-color,#0b3a75)}
+.qu-acts{display:flex;gap:6px;justify-content:center;align-items:center;flex-wrap:nowrap}
+.qu-ib{width:34px;height:34px;border:0;border-radius:9px;display:inline-grid;place-items:center;color:#fff;cursor:pointer;font-size:.9rem;box-shadow:0 1px 3px rgba(0,0,0,.22);transition:transform .12s,box-shadow .12s;padding:0}
+.qu-ib:hover{transform:translateY(-2px);box-shadow:0 4px 8px rgba(0,0,0,.25)}.qu-ib .qu-ibt{display:none}
+.qu-ib-ed{background:#2d6a4f}.qu-ib-del{background:#b91c1c}.qu-ib-view{background:#1d4ed8}.qu-ib-qr{background:#475569}.qu-ib-other{background:#0b3a75;width:auto;padding:0 10px}
+.qu-age{font-size:.75rem;color:#475569;margin-top:2px;font-weight:400}
+#qu-need{position:fixed;inset-inline:12px;bottom:12px;z-index:9998;background:#fff7ed;border:2px solid #f59e0b;color:#7c2d12;border-radius:12px;padding:10px 14px;display:flex;gap:12px;align-items:center;justify-content:space-between;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+#qu-need button{background:#b45309;color:#fff;border:0;border-radius:8px;padding:7px 16px;cursor:pointer;font:inherit}
+@media(max-width:600px){#qu-need{flex-direction:column;align-items:stretch}}
+
+
+[data-v=students] table td:last-child{position:sticky;left:0;z-index:1;background:#fff;box-shadow:2px 0 5px rgba(0,0,0,.1)}[data-v=students] table tbody tr:nth-child(even) td:last-child{background:#f8fafc}[data-v=students] table tbody tr:hover td:last-child{background:#e0f2fe}[data-v=students] table thead th:last-child{left:0;z-index:4}
 </style>
 </head>
 
@@ -5908,11 +5928,11 @@ th:nth-child(2),td:nth-child(2),th:nth-child(10),td:nth-child(10),th:nth-child(1
             function sideItems() {
                 const adm = isAdm(); const I = (id, icn, t, fn) => `<button class="pv-it" data-id="${id}" onclick="${fn}">${ic(icn)}${t}${id === 'notif' ? '<b id="pv-nbadge" style="display:none"></b>' : ''}</button>`;
                 let h = `<div class="pv-brand"><img src="شعار.png" onerror="this.onerror=null;this.src=FALLBACK_AVATAR"><div>بالقرآن نحيا<small>النظام الجامعي</small></div></div><div class="pv-grp">OVERVIEW</div>` + I('home', '🏠', 'الرئيسية', "pvShow('home')");
-                if (adm) { h += `<div class="pv-grp">ACADEMICS</div>` + I('classes', 'fa-layer-group', 'الصفوف والحلقات', "pvShow('classes')") + I('map', 'fa-diagram-project', 'خريطة الدورات', "pvShow('map')") + I('students', 'fa-users', 'الطلاب', "pvShow('students')") + I('cert', '🎓', 'الشهادات والوثائق', "pvShow('cert')") + I('intake', 'fa-file-arrow-up', 'رفع الملفات', "pvShow('intake')") + `<div class="pv-grp">MANAGEMENT</div>` + I('roles', '🛡️', 'الأدوار والصلاحيات', "openStaff()") + I('trash', 'fa-trash-can', 'سلة المحذوفات', "openModal('trash-modal')") + I('outbox', 'fa-paper-plane', 'الرسائل الصادرة', "pvShow('outbox')") + (isOwner() ? I('reset', 'fa-key', 'إعادة تعيين كلمات المرور', "pvShow('reset')") + I('qr', 'fa-qrcode', 'رموز QR', "pvShow('qr')") : ''); }
-                else h += `<div class="pv-grp">ACADEMICS</div>` + I('myclass', 'fa-chalkboard-user', 'صفّي', "pvMyClass()") + I('account', '🪪', 'حسابي', "pvShow('account')") + I('map', 'fa-diagram-project', 'خريطة الدورات', "pvShow('map')");
-                h += `<div class="pv-grp">MY ACCOUNT</div>` + I('notif', 'fa-bell', 'الإشعارات', "openNotifCenter()") + I('editinfo', 'fa-user-pen', 'تعديل بياناتي', "openModal('edit-my-info-modal')") + I('chpass', 'fa-key', 'تغيير كلمة المرور', "openModal('cp-modal')") + I('set', '🎨', 'الإعدادات والمظهر', "pvShow('set')") + I('out', 'fa-right-from-bracket', 'تسجيل الخروج', "logout()") + `<div class="pv-foot" id="pv-sync">التزامن: غير مفعّل</div>`; return h;
+                if (adm) { h += `<div class="pv-grp">ACADEMICS</div>` + I('classes', 'fa-layer-group', 'الصفوف والحلقات', "pvShow('classes')") + I('map', 'fa-diagram-project', 'خريطة الدورات', "pvShow('map')") + I('students', 'fa-users', 'الطلاب', "pvShow('students')") + I('cert', '🎓', 'الشهادات والوثائق', "pvShow('cert')") + I('intake', 'fa-file-arrow-up', 'رفع الملفات', "pvShow('intake')") + `<div class="pv-grp">MANAGEMENT</div>` + I('roles', '🛡️', 'الأدوار والصلاحيات', "openStaff()") + I('trash', 'fa-trash-can', 'سلة المحذوفات', "openModal('trash-modal')") + I('outbox', 'fa-paper-plane', 'الرسائل الصادرة', "pvShow('outbox')") + I('tickets', 'fa-ticket', 'الطلبات والعرائض', "pvShow('tickets')") + (isOwner() ? I('reset', 'fa-key', 'إعادة تعيين كلمات المرور', "pvShow('reset')") + I('qr', 'fa-qrcode', 'رموز QR', "pvShow('qr')") : ''); }
+                else h += `<div class="pv-grp">ACADEMICS</div>` + I('myclass', 'fa-chalkboard-user', 'صفّي', "pvMyClass()") + I('account', '🪪', 'حسابي', "pvShow('account')") + I('map', 'fa-diagram-project', 'خريطة الدورات', "pvShow('map')") + I('tickets', 'fa-ticket', 'الطلبات والعرائض', "pvShow('tickets')");
+                h += `<div class="pv-grp">MY ACCOUNT</div>` + I('notif', 'fa-bell', 'الإشعارات', "openNotifCenter()") + I('editinfo', 'fa-user-pen', 'تعديل بياناتي', "openModal('edit-my-info-modal')") + I('chpass', 'fa-key', 'تغيير كلمة المرور', "openModal('cp-modal')") + I('set', '🎨', 'الإعدادات والمظهر', "pvShow('set')") + I('guide', 'fa-book', 'الدليل والأنظمة', "pvShow('guide')") + I('bug', 'fa-bug', 'الإبلاغ عن خلل', "qBug()") + I('out', 'fa-right-from-bracket', 'تسجيل الخروج', "logout()") + `<div class="pv-foot" id="pv-sync">التزامن: غير مفعّل</div>`; return h;
             }
-            const TT = { roles: 'الأدوار والصلاحيات', trash: 'سلة المحذوفات', reset: 'إعادة تعيين كلمات المرور', qr: 'رموز QR', outbox: 'الرسائل الصادرة', course: 'الدورة', map: 'خريطة الدورات', home: 'الرئيسية', classes: 'الصفوف والحلقات', students: 'الطلاب', intake: 'رفع الملفات', cert: 'الشهادات والوثائق', set: 'الإعدادات والمظهر', account: 'حسابي' };
+            const TT = { guide: 'الدليل والأنظمة', tickets: 'الطلبات والعرائض', roles: 'الأدوار والصلاحيات', trash: 'سلة المحذوفات', reset: 'إعادة تعيين كلمات المرور', qr: 'رموز QR', outbox: 'الرسائل الصادرة', course: 'الدورة', map: 'خريطة الدورات', home: 'الرئيسية', classes: 'الصفوف والحلقات', students: 'الطلاب', intake: 'رفع الملفات', cert: 'الشهادات والوثائق', set: 'الإعدادات والمظهر', account: 'حسابي' };
             window.pvMyClass = function () { const me = myRec(); const i = (appData.classes || []).findIndex(c => me && c.name === me.className); if (i < 0) { showToast('أنت غير مسجّل في صف'); return; } pvSide(false); openMyClassroom(i); };
             window.pvSide = function (o) { const s = $('pv-side'); if (!s) return; s.classList.toggle('open', o === undefined ? !s.classList.contains('open') : o); $('pv-scrim').classList.toggle('open', s.classList.contains('open')); };
             window.pvShow = function (v) {
@@ -5985,6 +6005,7 @@ th:nth-child(2),td:nth-child(2),th:nth-child(10),td:nth-child(10),th:nth-child(1
                 try {
                     const d = f.contentDocument; const sp = d.getElementById('splashScreen'); if (sp) sp.style.display = 'none'; const fr = d.querySelector('.theme-toggle-btn-f'); if (fr) fr.style.display = 'none';
                     const sel = d.getElementById('studentSelect'); if (!sel) return; const have = new Set([...sel.options].map(o => o.value)); appData.students.filter(isStudentX).forEach(s => { if (!have.has(s.name)) { const o = d.createElement('option'); o.value = o.textContent = s.name; sel.appendChild(o); } });
+                    const w = f.contentWindow; appData.students.filter(isStudentX).forEach(s => { const pr = String(s.name || '').trim().split(/\s+/), o = { firstName: pr[0] || '', fatherName: pr.slice(1, -1).join(' '), lastName: pr.length > 1 ? pr[pr.length - 1] : '', birthDate: s.birth || '' }; try { w.eval('(function(n,o){var d=studentsDatabase[n];if(!d){studentsDatabase[n]=o}else if(o.birthDate){d.birthDate=o.birthDate}})(' + JSON.stringify(s.name) + ',' + JSON.stringify(o) + ')'); } catch (x) { } });
                 } catch (e) { }
             }
             function openCert() { const box = $('pv-cert'); let f = $('cert-frame'); if (!f) { const bytes = Uint8Array.from(atob(CERT_B64), c => c.charCodeAt(0)); f = document.createElement('iframe'); f.id = 'cert-frame'; f.onload = () => fillCert(f); f.srcdoc = new TextDecoder().decode(bytes); box.appendChild(f); } else fillCert(f); }
@@ -6316,63 +6337,71 @@ th:nth-child(2),td:nth-child(2),th:nth-child(10),td:nth-child(10),th:nth-child(1
     /* ---------- الدورات: بداية/نهاية، امتحانات بنسب، متطلبات ---------- */
     var cE = { i: -1, f: {}, exams: [], prereq: [] };
     function rid() { return 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
+    function kindOf(c) { return c.kind || (c.end ? 'course' : 'class'); } window.kindOf = kindOf;
     window.courseInfo = function (c) {
-        var h = '';
-        if (c.start || c.end) h += '<div style="font-size:.8rem;color:var(--text-muted)">المدة: <strong>' + X(c.start || '—') + '</strong> ← <strong>' + X(c.end || '—') + '</strong></div>';
+        var h = '', k = kindOf(c);
+        if (k === 'class') h += '<div style="font-size:.8rem;color:#7c3aed;font-weight:700">صف مستمر (لا ينتهي)</div>';
+        else { var st = ''; if (c.end && today() > c.end) st = ' <b style="color:#b91c1c">— انتهت</b>'; else if (c.start && today() < c.start) st = ' <b style="color:#b45309">— لم تبدأ</b>'; else if (c.start || c.end) st = ' <b style="color:#15803d">— جارية</b>'; h += '<div style="font-size:.8rem;color:var(--text-muted)">دورة · المدة: <strong>' + X(c.start || '—') + '</strong> ← <strong>' + X(c.end || '—') + '</strong>' + st + '</div>'; }
         if ((c.exams || []).length) h += '<div style="font-size:.8rem;color:var(--text-muted)">الامتحانات: ' + c.exams.map(function (e) { return X(e.name) + ' ' + (+e.weight) + '%'; }).join(' · ') + '</div>';
         var pr = (c.prereq || []).map(function (p) { var q = cById(p); return q ? X(q.name) : null; }).filter(Boolean);
         if (pr.length) h += '<div style="font-size:.8rem;color:#b45309">يتطلب: ' + pr.join('، ') + '</div>';
         return h;
     };
     window.qcOpen = function (i) {
-        if (i == null) cE = { i: -1, f: { name: '', teacher: '', sched: '', start: '', end: '' }, exams: [], prereq: [] };
-        else { var c = cls()[i]; if (!c) return; cE = { i: i, f: { name: c.name, teacher: c.teacher || '', sched: c.schedule || '', start: c.start || '', end: c.end || '' }, exams: JSON.parse(JSON.stringify(c.exams || [])), prereq: (c.prereq || []).slice() }; }
+        if (i == null) cE = { i: -1, f: { kind: 'course', name: '', teacher: '', sched: '', start: '', end: '' }, exams: [], prereq: [] };
+        else { var c = cls()[i]; if (!c) return; cE = { i: i, f: { kind: kindOf(c), name: c.name, teacher: c.teacher || '', sched: c.schedule || '', start: c.start || '', end: c.end || '' }, exams: JSON.parse(JSON.stringify(c.exams || [])), prereq: (c.prereq || []).slice() }; }
         pvShow('course');
     };
     function qcRead() {
-        if (!$('qc-name')) return;
-        cE.f = { name: $('qc-name').value, teacher: $('qc-teacher').value, sched: $('qc-sched').value, start: $('qc-start').value, end: $('qc-end').value };
+        if (!$('qc-name')) return; var kr = document.querySelector('input[name=qc-kind]:checked');
+        cE.f = { kind: kr ? kr.value : (cE.f.kind || 'course'), name: $('qc-name').value, teacher: $('qc-teacher').value, sched: $('qc-sched').value, start: $('qc-start').value, end: $('qc-end') ? $('qc-end').value : '' };
         cE.exams = Array.prototype.map.call(document.querySelectorAll('#qc-exams .qc-row'), function (r, k) { return { id: (cE.exams[k] && cE.exams[k].id) || rid(), name: r.querySelector('[data-k=n]').value, weight: parseFloat(r.querySelector('[data-k=w]').value) || 0 }; });
         cE.prereq = Array.prototype.map.call(document.querySelectorAll('#qc-pre input:checked'), function (c) { return c.value; });
     }
-    function qcTotal() { qcRead(); var s = cE.exams.reduce(function (a, e) { return a + (+e.weight || 0); }, 0), el = $('qc-total'); if (el) { el.textContent = 'المجموع: ' + s + '%'; el.style.color = (!cE.exams.length || Math.abs(s - 100) < 0.01) ? '#15803d' : '#b91c1c'; } }
+    window.qcKind = function () { qcRead(); qcRender(); };
+    function qcTotal() { qcRead(); var wk = $('qc-weeks'); if (wk) { var d1 = Date.parse(cE.f.start), d2 = Date.parse(cE.f.end); wk.textContent = (cE.f.kind === 'course' && d1 && d2 && d2 >= d1) ? 'مدة الدورة: ' + Math.round((d2 - d1) / 6048e5) + ' أسبوع (المعتاد: 14 أسبوع دراسة + أسبوعان للامتحانات). التسجيل يُغلق بعد أسبوع من البداية.' : ''; } var s = cE.exams.reduce(function (a, e) { return a + (+e.weight || 0); }, 0), el = $('qc-total'); if (el) { el.textContent = 'المجموع: ' + s + '%'; el.style.color = (!cE.exams.length || Math.abs(s - 100) < 0.01) ? '#15803d' : '#b91c1c'; } }
     window.qcTotal = qcTotal;
     window.qcAdd = function () { qcRead(); cE.exams.push({ id: rid(), name: '', weight: 0 }); qcRender(); };
     window.qcDel = function (k) { qcRead(); cE.exams.splice(k, 1); qcRender(); };
     function dependsOn(pid, target, seen) { seen = seen || {}; if (pid === target) return true; if (seen[pid]) return false; seen[pid] = 1; var c = cById(pid); return !!c && (c.prereq || []).some(function (q) { return dependsOn(q, target, seen); }); }
     function qcRender() {
-        var b = $('pv-course'); if (!b) return; var f = cE.f, me = cE.i >= 0 ? cls()[cE.i] : null, others = cls().filter(function (c, k) { return k !== cE.i; });
-        b.innerHTML = '<div class="pv-card"><h3>' + (me ? '✏️ تعديل الدورة' : '➕ دورة / صف جديد') + '</h3><div class="qu-grid">'
-            + '<label>اسم الدورة أو الصف<input id="qc-name" value="' + X(f.name) + '"></label><label>المشرف / الأستاذ<input id="qc-teacher" value="' + X(f.teacher) + '"></label>'
-            + '<label>الموعد<input id="qc-sched" value="' + X(f.sched) + '" placeholder="السبت 5:00 مساءً"></label><label>بداية الدورة<input type="date" id="qc-start" value="' + X(f.start) + '"></label><label>نهاية الدورة<input type="date" id="qc-end" value="' + X(f.end) + '"></label></div></div>'
+        var b = $('pv-course'); if (!b) return; var f = cE.f, isC = f.kind !== 'class', me = cE.i >= 0 ? cls()[cE.i] : null, others = cls().filter(function (c, k) { return k !== cE.i && kindOf(c) === 'course'; });
+        b.innerHTML = '<div class="pv-card"><h3>' + (me ? '✏️ تعديل' : '➕ إضافة') + '</h3><div class="qc-kind"><label><input type="radio" name="qc-kind" value="course"' + (isC ? ' checked' : '') + ' onchange="qcKind()"> <b>دورة</b> — لها مدة زمنية محددة (بداية ونهاية) ثم ينتقل الطالب إلى المرحلة التالية</label><label><input type="radio" name="qc-kind" value="class"' + (!isC ? ' checked' : '') + ' onchange="qcKind()"> <b>صف / حلقة مستمرة</b> — لا ينتهي بمدة زمنية <span style="color:#7c3aed">(لا ينتهي)</span></label></div><div class="qu-grid">'
+            + '<label>' + (isC ? 'اسم الدورة' : 'اسم الصف') + '<input id="qc-name" value="' + X(f.name) + '"></label><label>المشرف / الأستاذ<input id="qc-teacher" value="' + X(f.teacher) + '"></label>'
+            + '<label>الموعد<input id="qc-sched" value="' + X(f.sched) + '" placeholder="السبت 5:00 مساءً"></label><label>' + (isC ? 'بداية الدورة (إجباري)' : 'تاريخ البدء (اختياري)') + '<input type="date" id="qc-start" value="' + X(f.start) + '" oninput="qcTotal()"></label>'
+            + (isC ? '<label>نهاية الدورة (إجباري)<input type="date" id="qc-end" value="' + X(f.end) + '" oninput="qcTotal()"></label>' : '') + '</div><p id="qc-weeks" class="muted-small"></p></div>'
             + '<div class="pv-card"><h3>📝 الامتحانات والعلامات (نسبة كل واحد من المعدل)</h3><div id="qc-exams">' + cE.exams.map(function (e, k) { return '<div class="qc-row"><input data-k="n" placeholder="مثال: الامتحان الأول" value="' + X(e.name) + '" oninput="qcTotal()"><input data-k="w" type="number" min="0" max="100" step="any" value="' + (e.weight || '') + '" placeholder="%" oninput="qcTotal()"><span>%</span><button type="button" class="btn-action" onclick="qcDel(' + k + ')" style="background:#b91c1c">حذف</button></div>'; }).join('') + '</div>'
             + '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px"><button type="button" class="btn-action" onclick="qcAdd()">+ إضافة امتحان</button><b id="qc-total"></b></div><p class="muted-small">مجموع النسب لازم يساوي 100%. الامتحانات تظهر تلقائياً بتبويب «العلامات» داخل الصف لإدخال العلامات، وتدخل بحساب المعدل حسب نسبتها.</p></div>'
-            + '<div class="pv-card"><h3>🔗 المتطلبات السابقة</h3><p class="muted-small">لا يُسجَّل الطالب بهذه الدورة إلا بعد إتمامه الدورات المحددة هنا.</p><div id="qc-pre" class="qc-pre">' + (others.map(function (c) { var bad = me && dependsOn(c.id, me.id); return '<label><input type="checkbox" value="' + X(c.id) + '"' + (cE.prereq.indexOf(c.id) >= 0 ? ' checked' : '') + (bad ? ' disabled' : '') + '> ' + X(c.name) + (bad ? ' <small>(يعتمد على هذه الدورة)</small>' : '') + '</label>'; }).join('') || '<small class="muted-small">لا توجد دورات أخرى بعد.</small>') + '</div></div>'
+            + '<div class="pv-card"><h3>🔗 المتطلبات السابقة (دورات فقط)</h3><p class="muted-small">لا يُسجَّل الطالب هنا إلا بعد إتمامه الدورات المحددة. الصفوف المستمرة لا تُعدّ متطلباً لأنها لا تنتهي.</p><div id="qc-pre" class="qc-pre">' + (others.map(function (c) { var bad = me && dependsOn(c.id, me.id); return '<label><input type="checkbox" value="' + X(c.id) + '"' + (cE.prereq.indexOf(c.id) >= 0 ? ' checked' : '') + (bad ? ' disabled' : '') + '> ' + X(c.name) + (bad ? ' <small>(يعتمد على هذه الدورة)</small>' : '') + '</label>'; }).join('') || '<small class="muted-small">لا توجد دورات أخرى بعد.</small>') + '</div></div>'
             + '<div class="pv-card" style="display:flex;gap:10px;flex-wrap:wrap"><button type="button" class="btn-primary" style="width:auto;padding:10px 26px" onclick="qcSave()">حفظ</button><button type="button" class="btn-action" onclick="pvShow(\'classes\')">رجوع</button>'
-            + (me ? '<button type="button" class="btn-action" style="background:#2d6a4f" onclick="qcComplete()">تسجيل إتمام الدورة للناجحين (علامة ≥ 50)</button><button type="button" class="btn-action" onclick="pvShow(\'map\')">الخريطة</button>' : '') + '</div>';
+            + (me && isC ? '<button type="button" class="btn-action" style="background:#2d6a4f" onclick="qcComplete()">إنهاء الدورة وتسجيل الناجحين (علامة ≥ 50)</button>' : '') + (me ? '<button type="button" class="btn-action" onclick="pvShow(\'map\')">الخريطة</button>' : '') + '</div>';
         qcTotal();
     }
     window.qcSave = function () {
-        qcRead(); var f = cE.f, name = (f.name || '').trim(), teacher = (f.teacher || '').trim();
-        if (!name || !teacher) { T('اكتب اسم الدورة والمشرف'); return; }
+        qcRead(); var f = cE.f, isC = f.kind !== 'class', name = (f.name || '').trim(), teacher = (f.teacher || '').trim();
+        if (!name || !teacher) { T('اكتب الاسم والمشرف'); return; }
         if (cls().some(function (c, k) { return c.name === name && k !== cE.i; })) { T('يوجد صف بهذا الاسم'); return; }
-        if (f.start && f.end && f.start > f.end) { T('تاريخ النهاية قبل البداية'); return; }
+        if (isC && (!f.start || !f.end)) { T('الدورة لها بداية ونهاية: حدّد التاريخين'); return; }
+        if (isC && f.start > f.end) { T('تاريخ النهاية قبل البداية'); return; }
         var ex = cE.exams.filter(function (e) { return (e.name || '').trim(); }); ex.forEach(function (e) { e.name = e.name.trim(); });
         var sum = ex.reduce(function (a, e) { return a + (+e.weight || 0); }, 0);
         if (ex.length && Math.abs(sum - 100) > 0.01) { T('مجموع النسب لازم يساوي 100% (الآن ' + sum + '%)'); return; }
         var c, isNew = cE.i < 0;
         if (isNew) { c = { id: 'C' + Date.now().toString(36), owner: currentUser ? lc(currentUser.email) : '', ownerName: currentUser ? currentUser.name : '' }; cls().push(c); } else c = cls()[cE.i];
         if (c.id && cE.prereq.some(function (p) { return dependsOn(p, c.id); })) { T('لا يمكن أن يكون المتطلب معتمداً على نفس الدورة'); return; }
-        var old = c.name; c.name = name; c.teacher = teacher; c.schedule = (f.sched || '').trim(); c.start = f.start || ''; c.end = f.end || ''; c.exams = ex; c.prereq = cE.prereq.slice();
+        var old = c.name; c.kind = isC ? 'course' : 'class'; c.name = name; c.teacher = teacher; c.schedule = (f.sched || '').trim(); c.start = f.start || ''; c.end = isC ? f.end : ''; c.exams = ex; c.prereq = cE.prereq.slice();
         if (!isNew && old && old !== name) { appData.students.forEach(function (s) { if (s.className === old) s.className = name; }); cwList().forEach(function (w) { if (w.className === old) w.className = name; }); (appData.stream || []).forEach(function (p) { if (p.className === old) p.className = name; }); }
         var cw = cwList(), keep = {}; ex.forEach(function (e) { var id = 'EX-' + e.id; keep[id] = 1; var w = cw.find(function (x) { return x.id === id; }); if (!w) { w = newWork(name, 'assignment', e.name, 100, 'الامتحانات'); w.id = id; w.examId = e.id; cw.push(w); ensureTopic(name, 'الامتحانات'); } w.title = e.name; w.className = name; w.weight = +e.weight; w.points = 100; });
         appData.classwork = cw.filter(function (w) { var gone = w.className === name && w.examId && !keep[w.id]; if (gone) appData.students.forEach(function (s) { if (s.marks) delete s.marks[w.id]; }); return !gone; });
-        saveData(); T('تم حفظ الدورة'); pvShow('classes'); try { renderClassesList(); } catch (e) { } if (isNew) { try { openMembers(cls().length - 1); } catch (e) { } }
+        saveData(); T('تم الحفظ'); pvShow('classes'); try { renderClassesList(); } catch (e) { } if (isNew) { try { openMembers(cls().length - 1); } catch (e) { } }
     };
     window.qcComplete = function () {
-        var c = cls()[cE.i]; if (!c) return; var n = 0;
+        var c = cls()[cE.i]; if (!c || kindOf(c) !== 'course') return; var n = 0;
         appData.students.forEach(function (s) { if (s.className !== c.name || !isStudentX(s)) return; var m = markOf(s); if (m != null && m >= 50 && !barredAbs(s)) { s.completed = s.completed || {}; if (!s.completed[c.id]) { s.completed[c.id] = { mark: Math.round(m * 10) / 10, date: today() }; n++; if (s.email) notify([s.email], { type: 'class', title: 'أتممت دورة «' + c.name + '»', text: 'مبارك! علامتك ' + (Math.round(m * 10) / 10) + '%' }); } } });
         saveData(); T(n ? 'سُجّل إتمام الدورة لـ ' + n + ' طالب' : 'لا يوجد طلاب جدد ينطبق عليهم الشرط');
+        var nx = cls().filter(function (k) { return kindOf(k) === 'course' && (k.prereq || []).indexOf(c.id) >= 0; });
+        if (nx.length === 1 && appData.students.some(function (s) { return s.className === c.name && s.completed && s.completed[c.id]; }) && confirm('نقل الناجحين إلى المرحلة التالية: «' + nx[0].name + '»؟')) { var mv = 0; appData.students.forEach(function (s) { if (s.className === c.name && s.completed && s.completed[c.id]) { s.className = nx[0].name; mv++; if (s.email) notify([s.email], { type: 'class', title: 'انتقلت إلى «' + nx[0].name + '»', text: 'المرحلة التالية بعد إتمام «' + c.name + '».' }); } }); saveData(); T('نُقل ' + mv + ' طالباً إلى «' + nx[0].name + '»'); }
+        else if (nx.length > 1) T('الدورات التالية: ' + nx.map(function (k) { return k.name; }).join('، ') + ' — سجّلهم من «أعضاء الصف»');
     };
     var _mk = window.markOf;
     window.markOf = function (st) {
@@ -6387,6 +6416,7 @@ th:nth-child(2),td:nth-child(2),th:nth-child(10),td:nth-child(10),th:nth-child(1
         var c = cls()[parseInt($('cm-class-index').value)], promo = [];
         if (c) {
             appData.students.forEach(function (x, k) { if (_cmSel.has(k) && x.className !== c.name) { var oc = cls().find(function (q) { return q.name === x.className; }); if (oc && passing(x, oc.name)) promo.push([x, oc, markOf(x)]); } });
+            if (c.start && kindOf(c) === 'course') { var lim = new Date(c.start); lim.setDate(lim.getDate() + 7); var adds = appData.students.filter(function (x, k) { return _cmSel.has(k) && x.className !== c.name; }).length; if (adds && today() > lim.toISOString().slice(0, 10) && !confirm('انتهت فترة التسجيل بهذه الدورة (أسبوع بعد البداية). هل تريد تسجيل الطلاب رغم ذلك؟')) return; }
             if ((c.prereq || []).length) {
                 var miss = []; appData.students.forEach(function (x, k) { if (_cmSel.has(k) && x.className !== c.name) { var lack = c.prereq.filter(function (p) { var q = cById(p); return !(x.completed && x.completed[p]) && !(q && passing(x, q.name)); }); if (lack.length) miss.push(x.name + ' (ينقصه: ' + lack.map(function (p) { var q = cById(p); return q ? q.name : p; }).join('، ') + ')'); } });
                 if (miss.length && !confirm('طلاب لم يُتمّوا المتطلبات السابقة:\n' + miss.slice(0, 8).join('\n') + (miss.length > 8 ? '\n…' : '') + '\n\nهل تريد تسجيلهم رغم ذلك؟')) return;
@@ -6410,10 +6440,10 @@ th:nth-child(2),td:nth-child(2),th:nth-child(10),td:nth-child(10),th:nth-child(1
         var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + TW + ' ' + TH + '" width="' + TW + '" height="' + TH + '" style="font-family:inherit"><defs><marker id="ar" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0L10 4L0 8z" fill="#64748b"/></marker></defs>';
         cl.forEach(function (c) { (c.prereq || []).forEach(function (p) { var a = pos[p], d = pos[c.id]; if (!a || !d) return; var x1 = a.x, y1 = a.y + H / 2, x2 = d.x + W, y2 = d.y + H / 2, mx = (x1 + x2) / 2; svg += '<path d="M' + x1 + ' ' + y1 + ' C' + mx + ' ' + y1 + ' ' + mx + ' ' + y2 + ' ' + x2 + ' ' + y2 + '" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>'; }); });
         cl.forEach(function (c, i) {
-            var p = pos[c.id], col = '#1d4ed8', st2 = '';
+            var p = pos[c.id], col = kindOf(c) === 'class' ? '#7c3aed' : '#1d4ed8', st2 = '';
             if (rec) { if (rec.completed && rec.completed[c.id]) { col = '#15803d'; st2 = '✔ مكتملة'; } else if (rec.className === c.name) { col = '#d97706'; st2 = 'قيد الدراسة'; } else if ((c.prereq || []).every(function (q) { return rec.completed && rec.completed[q]; })) { col = '#0ea5e9'; st2 = 'متاحة لك'; } else { col = '#94a3b8'; st2 = 'تتطلب متطلبات'; } }
-            var nm = c.name.length > 24 ? c.name.slice(0, 23) + '…' : c.name, dt = (c.start || c.end) ? (c.start || '—') + ' ← ' + (c.end || '—') : (c.teacher || '');
-            svg += '<g ' + (admin() ? 'style="cursor:pointer" onclick="qcOpen(' + i + ')"' : '') + '><rect x="' + p.x + '" y="' + p.y + '" width="' + W + '" height="' + H + '" rx="12" fill="' + col + '"/><text x="' + (p.x + W / 2) + '" y="' + (p.y + 26) + '" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">' + X(nm) + '</text><text x="' + (p.x + W / 2) + '" y="' + (p.y + 46) + '" text-anchor="middle" fill="#e2e8f0" font-size="11">' + X(dt) + '</text>' + (st2 ? '<text x="' + (p.x + W / 2) + '" y="' + (p.y + 62) + '" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">' + st2 + '</text>' : '') + '</g>';
+            var nm = c.name.length > 24 ? c.name.slice(0, 23) + '…' : c.name, dt = kindOf(c) === 'class' ? '(الصف لا ينتهي)' : ((c.start || c.end) ? (c.start || '—') + ' ← ' + (c.end || '—') : (c.teacher || ''));
+            svg += '<g ' + (admin() ? 'style="cursor:pointer" onclick="qcOpen(' + i + ')"' : '') + '><rect x="' + p.x + '" y="' + p.y + '" width="' + W + '" height="' + H + '" rx="12" fill="' + col + '"' + (kindOf(c) === 'class' ? ' stroke="#fff" stroke-width="2" stroke-dasharray="6 4"' : '') + '/><text x="' + (p.x + W / 2) + '" y="' + (p.y + 26) + '" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">' + X(nm) + '</text><text x="' + (p.x + W / 2) + '" y="' + (p.y + 46) + '" text-anchor="middle" fill="#e2e8f0" font-size="11">' + X(dt) + '</text>' + (st2 ? '<text x="' + (p.x + W / 2) + '" y="' + (p.y + 62) + '" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">' + st2 + '</text>' : '') + '</g>';
         });
         b.innerHTML = '<div class="pv-card"><h3>🗺️ خريطة الدورات</h3><p class="muted-small">السهم يعني: لازم تُكمل الدورة اللي يخرج منها السهم قبل ما تبدأ الدورة اللي يدخل إليها. ' + (admin() ? 'اضغط على دورة لتعديلها.' : 'الأخضر مكتمل، الأصفر قيد الدراسة، الأزرق الفاتح متاح لك، الرمادي يتطلب متطلبات.') + '</p><div style="overflow-x:auto;direction:ltr;padding:6px 0">' + svg + '</svg></div></div>';
     }
@@ -6499,6 +6529,196 @@ th:nth-child(2),td:nth-child(2),th:nth-child(10),td:nth-child(10),th:nth-child(1
     var _rst = window.renderStudentsTable; window.renderStudentsTable = function () { var r = _rst.apply(this, arguments); try { mark(); } catch (e) { } return r; };
 
     setInterval(function () { try { if (currentUser) badge(); } catch (e) { } }, 4000);
+})();
+
+</script>
+<script id="qu-ext2">
+/* ===== من وثيقة المشروع: نظام الطلبات (التذاكر)، تنبيهات الغياب، الإبلاغ عن خلل ===== */
+(function () {
+    var $ = function (id) { return document.getElementById(id); };
+    function lc(s) { return String(s || '').trim().toLowerCase(); }
+    function X(s) { return esc(s); }
+    function T(m) { showToast(m); }
+    function admin() { try { return !!currentUser && (isOwner() || hasStaffAccess(currentUser)); } catch (e) { return false; } }
+    function persons() { return (appData.students || []).concat(appData.users || []); }
+    function cls() { return appData.classes || []; }
+    var ERR = []; window.addEventListener('error', function (e) { ERR.push((e.message || '') + ' @' + String(e.filename || '').split('/').pop() + ':' + e.lineno); if (ERR.length > 5) ERR.shift(); });
+    var a = $('pv-set'); if (a) a.insertAdjacentHTML('afterend', '<section id="pv-tickets" class="qu-pg"></section>');
+    var _ps = window.pvShow; window.pvShow = function (v) { _ps.apply(this, arguments); try { if (v === 'tickets') { cur = null; mode = ''; renderTickets(); } } catch (e) { console.error(e); } };
+
+    /* ---------- الطلبات والعرائض (رقم تذكرة فريد + دورة حياة) ---------- */
+    var TYPES = ['إذن غياب', 'طلب إعادة امتحان', 'استرحام', 'مراسلة المنسق', 'شكوى أو اقتراح', 'خلل برمجي', 'أخرى'];
+    var ST = { open: 'مفتوح', progress: 'قيد المعالجة', replied: 'تم الرد', closed: 'مغلق' }, COL = { open: '#b45309', progress: '#1d4ed8', replied: '#15803d', closed: '#64748b' };
+    var cur = null, mode = '', filt = 'all';
+    function tks() { return appData.tickets || (appData.tickets = []); }
+    function visible() { var e = lc(currentUser.email); return admin() ? tks() : tks().filter(function (t) { return t.by === e; }); }
+    function staffMails() { var s = {}; s[lc(appData.adminEmail)] = 1; persons().forEach(function (x) { if (x.email && isStaffPerson(x)) s[lc(x.email)] = 1; }); return Object.keys(s); }
+    function badge(t) { return '<span class="badge" style="background:' + COL[t.status] + ';color:#fff">' + ST[t.status] + '</span>'; }
+    function fmt(ts) { return new Date(ts).toLocaleString('ar'); }
+    window.renderTickets = function () {
+        var b = $('pv-tickets'); if (!b || !currentUser) return;
+        if (mode === 'new') { b.innerHTML = '<div class="pv-card"><h3>➕ طلب جديد</h3><div class="qu-grid"><label>نوع الطلب<select id="tk-type">' + TYPES.map(function (t) { return '<option>' + t + '</option>'; }).join('') + '</select></label><label>الموضوع<input id="tk-sub" placeholder="عنوان مختصر"></label></div><label style="display:block;margin-top:10px;font-weight:700">التفاصيل<textarea id="tk-txt" rows="5" style="width:100%;padding:9px;border:1px solid #cbd5e1;border-radius:8px;font:inherit"></textarea></label><label style="display:block;margin-top:10px;font-weight:700">رابط مستند داعم (اختياري)<input id="tk-link" placeholder="https://…" style="width:100%;padding:9px;border:1px solid #cbd5e1;border-radius:8px"></label><div style="display:flex;gap:8px;margin-top:12px"><button class="btn-primary" style="width:auto;padding:9px 24px" onclick="tkCreate()">إرسال</button><button class="btn-action" onclick="tkBack()">رجوع</button></div></div>'; return; }
+        if (cur) {
+            var t = tks().find(function (x) { return x.id === cur; }); if (!t) { cur = null; return renderTickets(); }
+            var st = admin();
+            b.innerHTML = '<div class="pv-card"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px"><h3>' + X(t.id) + ' — ' + X(t.subject) + '</h3>' + badge(t) + '</div><p class="muted-small">' + X(t.type) + ' · ' + X(t.name) + ' · ' + fmt(t.created) + (t.link ? ' · <a href="' + X(safeUrl(t.link) || '#') + '" target="_blank" rel="noopener">المستند</a>' : '') + (t.excuse ? ' · <b style="color:#15803d">تم قبول الإذن</b>' : '') + '</p>'
+                + t.msgs.map(function (m) { return '<div class="tk-msg ' + (m.staff ? 'tk-s' : '') + '"><b>' + X(m.name) + (m.staff ? ' (الإدارة)' : '') + '</b><div>' + X(m.text).replace(/\n/g, '<br>') + '</div><small class="muted-small">' + fmt(m.ts) + '</small></div>'; }).join('')
+                + (t.status === 'closed' ? '' : '<textarea id="tk-re" rows="3" placeholder="اكتب ردك…" style="width:100%;margin-top:8px;padding:9px;border:1px solid #cbd5e1;border-radius:8px;font:inherit"></textarea><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn-primary" style="width:auto;padding:8px 22px" onclick="tkReply()">إرسال الرد</button>')
+                + (st ? '<button class="btn-action" onclick="tkSet(\'progress\')">قيد المعالجة</button>' + (t.type === 'إذن غياب' && !t.excuse ? '<button class="btn-action" style="background:#15803d" onclick="tkExcuse()">قبول إذن الغياب</button>' : '') : '') + (t.status === 'closed' ? '' : '<button class="btn-action" style="background:#64748b" onclick="tkSet(\'closed\')">إغلاق الطلب</button></div>')
+                + (t.status === 'closed' ? '<button class="btn-action" onclick="tkSet(\'open\')">إعادة فتح</button>' : '') + '<div style="margin-top:10px"><button class="btn-action" onclick="tkBack()">رجوع للقائمة</button></div></div>'; return;
+        }
+        var ls = visible().filter(function (t) { return filt === 'all' || t.status === filt; }).sort(function (x, y) { return y.updated - x.updated; });
+        b.innerHTML = '<div class="pv-card"><h3>🎫 الطلبات والعرائض</h3><p class="muted-small">كل طلب له رقم مرجعي ويمرّ بالحالات: مفتوح ← قيد المعالجة ← تم الرد ← مغلق، وتبقى كل المراسلات محفوظة داخل الطلب.</p><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0"><button class="btn-primary" style="width:auto;padding:8px 20px" onclick="tkNew()">+ طلب جديد</button><div class="qu-chips">' + [['all', 'الكل']].concat(Object.keys(ST).map(function (k) { return [k, ST[k]]; })).map(function (f) { return '<button class="' + (filt === f[0] ? 'on' : '') + '" onclick="tkFilt(\'' + f[0] + '\')">' + f[1] + '</button>'; }).join('') + '</div></div>'
+            + '<div class="table-container"><table class="qu-tbl"><thead><tr><th>الرقم</th><th>النوع</th><th>الموضوع</th>' + (admin() ? '<th>مقدّم الطلب</th>' : '') + '<th>الحالة</th><th>آخر تحديث</th></tr></thead><tbody>' + (ls.map(function (t) { return '<tr style="cursor:pointer" onclick="tkView(\'' + t.id + '\')"><td><b>' + X(t.id) + '</b></td><td>' + X(t.type) + '</td><td>' + X(t.subject) + '</td>' + (admin() ? '<td>' + X(t.name) + '</td>' : '') + '<td>' + badge(t) + '</td><td>' + fmt(t.updated) + '</td></tr>'; }).join('') || '<tr><td colspan="6" style="text-align:center;color:#64748b;padding:20px">لا توجد طلبات.</td></tr>') + '</tbody></table></div></div>';
+    };
+    window.tkNew = function () { mode = 'new'; renderTickets(); }; window.tkBack = function () { cur = null; mode = ''; renderTickets(); };
+    window.tkView = function (id) { cur = id; mode = ''; renderTickets(); }; window.tkFilt = function (f) { filt = f; renderTickets(); };
+    function mkTicket(type, subject, text, link) {
+        appData.ticketSeq = (appData.ticketSeq || 0) + 1; var now = Date.now(), id = 'T-' + String(appData.ticketSeq).padStart(4, '0');
+        var t = { id: id, by: lc(currentUser.email), name: currentUser.name, type: type, subject: subject, status: 'open', created: now, updated: now, link: link || '', msgs: [{ by: lc(currentUser.email), name: currentUser.name, staff: false, text: text, ts: now }] };
+        tks().unshift(t); saveData(); notify(staffMails(), { type: 'ticket', title: 'طلب جديد ' + id, text: type + ' — ' + subject + ' (' + currentUser.name + ')', ref: { type: 'ticket' } }); return t;
+    }
+    window.tkCreate = function () {
+        var type = $('tk-type').value, sub = $('tk-sub').value.trim(), txt = $('tk-txt').value.trim(); if (!sub || !txt) { T('اكتب الموضوع والتفاصيل'); return; }
+        var t = mkTicket(type, sub, txt, $('tk-link').value.trim()); T('تم إرسال الطلب برقم ' + t.id); cur = t.id; mode = ''; renderTickets();
+    };
+    window.tkReply = function () {
+        var t = tks().find(function (x) { return x.id === cur; }), txt = ($('tk-re').value || '').trim(); if (!t || !txt) { T('اكتب الرد'); return; }
+        var st = admin(), now = Date.now(); t.msgs.push({ by: lc(currentUser.email), name: currentUser.name, staff: st, text: txt, ts: now }); t.updated = now; t.status = st ? 'replied' : 'open'; saveData();
+        if (st) notify([t.by], { type: 'ticket', title: 'رد على طلبك ' + t.id, text: txt.slice(0, 120), ref: { type: 'ticket' } }); else notify(staffMails(), { type: 'ticket', title: 'رد جديد على الطلب ' + t.id, text: currentUser.name + ': ' + txt.slice(0, 100), ref: { type: 'ticket' } });
+        T('تم إرسال الرد'); renderTickets();
+    };
+    window.tkSet = function (s) { var t = tks().find(function (x) { return x.id === cur; }); if (!t) return; t.status = s; t.updated = Date.now(); saveData(); if (admin() && t.by !== lc(currentUser.email)) notify([t.by], { type: 'ticket', title: 'تحديث على طلبك ' + t.id, text: 'الحالة: ' + ST[s], ref: { type: 'ticket' } }); renderTickets(); };
+    window.tkExcuse = function () { var t = tks().find(function (x) { return x.id === cur; }); if (!t) return; t.excuse = true; t.status = 'replied'; t.updated = Date.now(); t.msgs.push({ by: lc(currentUser.email), name: currentUser.name, staff: true, text: 'تم قبول إذن الغياب، ويحق لك إعادة الامتحان أو تعويض المحاضرة.', ts: Date.now() }); saveData(); notify([t.by], { type: 'ticket', title: 'تم قبول إذن الغياب ' + t.id, text: 'ويحق لك إعادة الامتحان أو تعويض المحاضرة.', ref: { type: 'ticket' } }); renderTickets(); };
+
+    /* ---------- الإبلاغ عن خلل: تذكرة تلقائية مع بيانات تقنية ---------- */
+    window.qBug = function () {
+        var note = prompt('اكتب وصفاً مختصراً للخلل (اختياري):', ''); if (note === null) return;
+        var info = ['الصفحة: ' + (document.body.dataset.view || '-'), 'المستخدم: ' + (currentUser ? currentUser.email : '-'), 'المتصفح: ' + navigator.userAgent, 'الشاشة: ' + innerWidth + '×' + innerHeight, 'الاتصال: ' + (navigator.onLine ? 'متصل' : 'غير متصل'), 'الأخطاء: ' + (ERR.length ? ERR.join(' | ') : 'لا يوجد')].join('\n');
+        var t = mkTicket('خلل برمجي', 'بلاغ خلل', (note ? note + '\n\n' : '') + info, ''); T('تم إرسال البلاغ برقم ' + t.id);
+    };
+
+    /* ---------- تنبيهات الغياب التلقائية (10% تنبيه، 18% إنذار، 10 مرات بالشهر حرمان) ---------- */
+    var _sv = window.saveData; window.saveData = function () { var r = _sv.apply(this, arguments); clearTimeout(window.__absT); window.__absT = setTimeout(absScan, 1500); return r; };
+    function absScan() {
+        if (!currentUser || !admin()) return; var ch = false;
+        (appData.students || []).forEach(function (s) {
+            if (!s.email || !isStudentX(s)) return; var c = cls().find(function (x) { return x.name === s.className; }); if (!c) return; var at = attStats(c)[s.id]; if (!at || at.total < 3) return;
+            var p = 100 * at.abs / at.total, bm = (at.mx || 0) >= 10;
+            if (p >= 18 && p < 20 && !s.absFinal) { s.absFinal = 1; ch = true; notify([s.email], { type: 'att', title: '⚠️ إنذار غياب نهائي', text: 'وصلت نسبة غيابك في «' + c.name + '» إلى ' + Math.round(p) + '%، وأنت قريب من حد الحرمان.' }); } else if (p < 18 && s.absFinal) { s.absFinal = 0; ch = true; }
+            if (bm && !s.absBar) { s.absBar = 1; ch = true; notify([s.email], { type: 'att', title: 'حرمان من الامتحان النهائي', text: 'غبت 10 مرات أو أكثر خلال شهر في «' + c.name + '»، لذلك لن يظهر معدلك ولا امتحان نهائي لك.' }); } else if (!bm && s.absBar) { s.absBar = 0; ch = true; }
+        });
+        if (ch) saveData();
+    }
+    window.absScan = absScan;
+    setInterval(function () { try { if (!currentUser) return; var b = document.querySelector('.pv-it[data-id=tickets]'); if (!b) return; var n = admin() ? visible().filter(function (t) { return t.status === 'open'; }).length : visible().filter(function (t) { return t.status === 'replied'; }).length, k = b.querySelector('b.qu-bd'); if (!k) { k = document.createElement('b'); k.className = 'qu-bd'; b.appendChild(k); } k.textContent = n || ''; k.style.display = n ? '' : 'none'; } catch (e) { } }, 4000);
+})();
+
+</script>
+<script id="qu-ext3">
+/* ===== الأزرار، المعرّفات، تاريخ الميلاد والعمر، الدليل ===== */
+(function () {
+    var $ = function (id) { return document.getElementById(id); };
+    function lc(s) { return String(s || '').trim().toLowerCase(); }
+    function X(s) { return esc(s); }
+    function T(m) { showToast(m); }
+    function admin() { try { return !!currentUser && (isOwner() || hasStaffAccess(currentUser)); } catch (e) { return false; } }
+    function owner() { try { return isOwner(); } catch (e) { return false; } }
+    function persons() { return (appData.students || []).concat(appData.users || []); }
+    function meRec() { return currentUser && persons().find(function (x) { return lc(x.email) === lc(currentUser.email); }); }
+
+    /* ---------- الدول والمعرّف: [رقم الدولة][السنة الهجرية][الرقم التسلسلي 001…] ---------- */
+    var COUNTRIES = [['لبنان', 1], ['سوريا', 2], ['فلسطين', 3], ['الأردن', 4], ['العراق', 5], ['مصر', 6], ['السعودية', 7], ['دولة عربية أخرى', 8], ['دولة أخرى', 9]];
+    window.QU_COUNTRIES = COUNTRIES;
+    function hijriYear(d) { try { var p = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { year: 'numeric' }).formatToParts(d || new Date()); var y = p.filter(function (x) { return x.type === 'year'; })[0]; var n = parseInt(y && y.value, 10); if (n > 1300 && n < 1700) return n; } catch (e) { } return Math.floor(((d || new Date()).getFullYear() - 622) * 1.0307); }
+    window.hijriYear = hijriYear;
+    window.ageOf = function (birth) { if (!birth) return null; var b = new Date(birth), t = new Date(); if (isNaN(b)) return null; var a = t.getFullYear() - b.getFullYear(), m = t.getMonth() - b.getMonth(); if (m < 0 || (m === 0 && t.getDate() < b.getDate())) a--; return a >= 0 && a < 130 ? a : null; };
+    function mkId(country, year) {
+        var pre = String(country) + String(year), max = 0, re = new RegExp('^' + pre + '(\\d{3})$');
+        (appData.students || []).concat(appData.trash || []).forEach(function (s) { var m = re.exec(String((s && s.id) || '')); if (m) max = Math.max(max, +m[1]); });
+        return pre + String(max + 1).padStart(3, '0');
+    }
+    window.__idCtx = null;
+    window.nextStudentId = function () { var c = window.__idCtx || {}; return mkId(c.country || 1, c.year || hijriYear()); };
+
+    /* حقول النموذج: الدولة، السنة الهجرية، تاريخ الميلاد (إجباري) */
+    (function inject() {
+        var f = document.querySelector('#add-student-modal form'); if (!f || $('new-birth')) return;
+        var sub = f.querySelector('button[type=submit]');
+        sub.insertAdjacentHTML('beforebegin', '<div class="form-group"><label>تاريخ الميلاد <b style="color:#b91c1c">(إجباري — يُحسب منه العمر)</b></label><input type="date" id="new-birth" required></div><div class="form-group"><label>الدولة (تحدد أول رقم في المعرّف)</label><select id="new-country">' + COUNTRIES.map(function (c) { return '<option value="' + c[1] + '">' + c[0] + ' (' + c[1] + ')</option>'; }).join('') + '</select></div><div class="form-group"><label>سنة التسجيل الهجرية</label><input type="number" id="new-hijri" min="1400" max="1600"><small class="muted-small" id="new-idprev"></small></div>');
+        var upd = function () { var p = $('new-idprev'); if ($('edit-index').value === '-1') p.textContent = 'المعرّف القادم: ' + mkId($('new-country').value, $('new-hijri').value || hijriYear()); };
+        ['new-country', 'new-hijri'].forEach(function (i) { $(i).addEventListener('input', upd); $(i).addEventListener('change', upd); }); window.__idPrev = upd;
+        var mi = $('edit-my-info-modal') && $('edit-my-info-modal').querySelector('form'); if (mi && !$('my-birth-input')) { var ph = $('my-phone-input').closest('.form-group'); ph.insertAdjacentHTML('afterend', '<div class="form-group"><label>تاريخ الميلاد <b style="color:#b91c1c">(إجباري)</b></label><input type="date" id="my-birth-input" required></div>'); }
+    })();
+    var _oas = window.openAddStudentModal; window.openAddStudentModal = function () { _oas.apply(this, arguments); $('new-country').disabled = false; $('new-hijri').disabled = false; $('new-hijri').value = hijriYear(); $('new-country').value = '1'; $('new-birth').value = ''; window.__idPrev(); };
+    var _oes = window.openEditStudent; window.openEditStudent = function (i) { _oes.apply(this, arguments); var s = appData.students[i]; $('new-birth').value = s.birth || ''; $('new-country').value = String(s.country || 1); $('new-hijri').value = s.hijri || hijriYear(); $('new-country').disabled = $('new-hijri').disabled = true; $('new-idprev').textContent = 'المعرّف: ' + (s.id || '-') + ' (لتغييره استخدم زر «ترتيب المعرّفات»)'; };
+    var _sur = window.saveUserRecord;
+    window.saveUserRecord = async function (e) {
+        e.preventDefault(); var idx = parseInt($('edit-index').value), birth = $('new-birth').value, n0 = appData.students.length;
+        if (!birth) { T('تاريخ الميلاد إجباري'); return; } if (new Date(birth) > new Date()) { T('تاريخ الميلاد غير صحيح'); return; }
+        window.__idCtx = { country: $('new-country').value, year: $('new-hijri').value || hijriYear() };
+        try { await _sur.call(this, e); } finally { window.__idCtx = null; }
+        var st = idx >= 0 ? appData.students[idx] : (appData.students.length > n0 ? appData.students[appData.students.length - 1] : null);
+        if (st) { st.birth = birth; if (idx < 0) { st.country = +$('new-country').value; st.hijri = +($('new-hijri').value || hijriYear()); } saveData(); try { renderStudentsTable(); } catch (x) { } }
+    };
+    var _smp = window.saveMyPersonalProfile; window.saveMyPersonalProfile = async function (e) { e.preventDefault(); var b = $('my-birth-input').value; if (!b) { T('تاريخ الميلاد إجباري'); return; } if (new Date(b) > new Date()) { T('تاريخ الميلاد غير صحيح'); return; } var r = await _smp.call(this, e); var rec = meRec(); if (rec) { rec.birth = b; saveData(); } setTimeout(needBar, 300); return r; };
+    var _om2 = window.openModal; window.openModal = function (id) { var r = _om2.apply(this, arguments); if (id === 'edit-my-info-modal') { var rec = meRec(); if ($('my-birth-input')) $('my-birth-input').value = (rec && rec.birth) || ''; } return r; };
+
+    /* ---------- تنبيه إكمال البيانات (تاريخ الميلاد إجباري) ---------- */
+    function needBar() {
+        var el = $('qu-need'), rec = meRec(), need = !!currentUser && rec && !rec.birth;
+        if (!need) { if (el) el.remove(); return; }
+        if (!el) { el = document.createElement('div'); el.id = 'qu-need'; document.body.appendChild(el); }
+        el.innerHTML = '<span>⚠️ يرجى إكمال بياناتك: <b>تاريخ الميلاد</b> (إجباري ليُحسب العمر)</span><button type="button" onclick="openModal(\'edit-my-info-modal\')">إكمال الآن</button>';
+        if (!rec.birthAsk) { rec.birthAsk = 1; try { notify([rec.email], { type: 'info', title: 'أكمل بياناتك', text: 'نرجو إدخال تاريخ ميلادك (حقل إجباري) من «تعديل بياناتي».', self: true }); } catch (e) { } }
+    }
+    window.needBar = needBar; setInterval(function () { try { needBar(); } catch (e) { } }, 3000);
+
+    /* ---------- أزرار الجدول موحّدة وأنيقة + العمر ---------- */
+    var ICON = { openEditStudent: ['ed', 'fa-pen', 'تعديل'], moveToTrash: ['del', 'fa-trash', 'حذف'], pvView: ['view', 'fa-eye', 'عرض'], qrShow: ['qr', 'fa-qrcode', 'رمز QR'] };
+    var _rh = window.rowHtml; window.rowHtml = function (st) {
+        var h = _rh.apply(this, arguments);
+        try {
+            var tpl = document.createElement('template'); tpl.innerHTML = '<table><tbody>' + h + '</tbody></table>'; var tr = tpl.content.querySelector('tr'); if (!tr) return h;
+            var td = tr.lastElementChild, btns = td ? Array.prototype.slice.call(td.querySelectorAll('button')) : [];
+            if (td && btns.length) {
+                var box = document.createElement('div'); box.className = 'qu-acts';
+                btns.forEach(function (b) { var fn = ((b.getAttribute('onclick') || '').match(/^\s*(\w+)\(/) || [])[1], ic = ICON[fn], nb = document.createElement('button'); nb.type = 'button'; nb.setAttribute('onclick', b.getAttribute('onclick')); if (ic) { nb.className = 'qu-ib qu-ib-' + ic[0]; nb.title = ic[2]; nb.innerHTML = '<i class="fa-solid ' + ic[1] + '"></i><span class="qu-ibt">' + ic[2] + '</span>'; } else { nb.className = 'qu-ib qu-ib-other'; nb.title = b.title || ''; nb.innerHTML = b.innerHTML; } box.appendChild(nb); });
+                td.innerHTML = ''; td.appendChild(box);
+            }
+            var a = window.ageOf(st && st.birth), nm = tr.querySelector('[data-c="name"]'); if (nm) nm.insertAdjacentHTML('beforeend', '<div class="qu-age">' + (a != null ? 'العمر: ' + a + ' سنة' : '<span style="color:#b91c1c">بلا تاريخ ميلاد</span>') + '</div>');
+            return tpl.content.querySelector('tbody').innerHTML;
+        } catch (e) { return h; }
+    };
+
+    /* ---------- ترتيب المعرّفات للقدامى (للمدير) ---------- */
+    window.idMigrate = function () {
+        if (!owner()) return; if (!confirm('سيُعاد ترقيم كل المعرّفات بالنمط الجديد: [الدولة][السنة الهجرية][001…]. الدولة الافتراضية لبنان والسنة الحالية لمن لم تُحدَّد له. هل تريد المتابعة؟')) return;
+        var map = {}, cnt = {}, list = appData.students.slice().sort(function (a, b) { return String(a.id).localeCompare(String(b.id), 'en', { numeric: true }); }), y = hijriYear();
+        list.forEach(function (s) { s.country = s.country || 1; s.hijri = s.hijri || y; var pre = String(s.country) + String(s.hijri); cnt[pre] = (cnt[pre] || 0) + 1; var nid = pre + String(cnt[pre]).padStart(3, '0'); map[s.id] = nid; });
+        (appData.classes || []).forEach(function (c) { Object.keys(c.attendance || {}).forEach(function (d) { var r = c.attendance[d]; r.all = (r.all || []).map(function (i) { return map[i] || i; }); r.absent = (r.absent || []).map(function (i) { return map[i] || i; }); }); });
+        (appData.classwork || []).forEach(function (w) { ['subs', 'votes'].forEach(function (k) { if (!w[k]) return; var o = {}; Object.keys(w[k]).forEach(function (i) { o[map[i] || i] = w[k][i]; }); w[k] = o; }); });
+        appData.students.forEach(function (s) { s.id = map[s.id] || s.id; }); saveData(); try { renderStudentsTable(); } catch (e) { } T('تم ترتيب ' + list.length + ' معرّفاً');
+    };
+    (function addBtn() { var iv = setInterval(function () { var bar = $('qu-stbar'); if (!bar) return; if (!$('qu-idbtn') && owner()) { var b = document.createElement('button'); b.id = 'qu-idbtn'; b.type = 'button'; b.className = 'btn-action'; b.textContent = '🔢 ترتيب المعرّفات'; b.onclick = window.idMigrate; bar.insertBefore(b, $('qu-stcount')); } }, 1500); })();
+
+    /* ---------- الدليل والأنظمة (بالعربية الفصحى) ---------- */
+    var a = $('pv-set'); if (a) a.insertAdjacentHTML('afterend', '<section id="pv-guide" class="qu-pg"></section>');
+    var GUIDE = [
+        ['١. التعريف بالمنصة', '<p>«منصة بالقرآن نحيا» منظومة رقمية لتعليم القرآن الكريم وفهمه، تجمع بين إدارة الطلاب والدورات والحلقات، ومتابعة الحضور والتقييم، والتواصل بين الطالب والمعلم والإدارة، في مكان واحد وبصلاحيات واضحة تحفظ خصوصية كل مستخدم.</p>'],
+        ['٢. المعرّف (رقم الهوية)', '<p>لكل شخص معرّف رقمي فريد يتكوّن من ثلاثة أجزاء متصلة، من اليمين إلى اليسار:</p><ul><li><b>رقم الدولة:</b> لبنان (١)، سوريا (٢)، فلسطين (٣)، الأردن (٤)، العراق (٥)، مصر (٦)، السعودية (٧)، دولة عربية أخرى (٨)، دولة أخرى (٩).</li><li><b>السنة الهجرية للتسجيل:</b> مثل ١٤٤٨.</li><li><b>الرقم التسلسلي:</b> ثلاث خانات تبدأ من ٠٠١ وتزداد تباعاً داخل الدولة والسنة نفسيهما.</li></ul><p>مثال: طالب لبناني سُجِّل عام ١٤٤٨هـ وهو الأول في ترتيبه، معرّفه <b dir="ltr">11448001</b>. ويمكن استعمال المعرّف في تسجيل الدخول بدل البريد الإلكتروني، ويُكتب أرقاماً فقط.</p>'],
+        ['٣. تسجيل الدخول والأمان', '<ul><li><b>الدخول الأول:</b> يكتب المستخدم بريده أو معرّفه ويترك كلمة المرور فارغة، ثم تُعرض عليه كلمة مرور جاهزة يقبلها بزر «تم»، أو يختار كلمة خاصة بزر «تعديل» ويكتبها مرتين.</li><li><b>الدخول برمز QR:</b> يعرض المدير رمز الشخص، فيمسحه الشخص بكاميرا هاتفه من صفحة الدخول فيدخل حسابه مباشرة.</li><li><b>تغيير كلمة المرور:</b> متاح في أي وقت من القائمة، ويتطلب كتابة كلمة المرور القديمة ثم الجديدة مرتين.</li><li><b>بقاء الدخول:</b> يبقى الحساب مفتوحاً على الجهاز إلى أن يضغط المستخدم «تسجيل الخروج».</li><li><b>البيانات الشخصية:</b> تاريخ الميلاد حقل إجباري لكل مستخدم، ويُحسب منه العمر تلقائياً ويتجدد مع مرور الزمن.</li></ul>'],
+        ['٤. الصفوف والدورات', '<p>تفرّق المنصة بين نوعين:</p><ul><li><b>الدورة:</b> لها بداية ونهاية محددتان، وامتحانات لكلٍّ منها نسبة من المعدل (ومجموع النسب مئة بالمئة)، وقد تتطلب دورات سابقة. وعند انتهائها وإتمام الطالب لها ينتقل إلى المرحلة التي تليها.</li><li><b>الصف (الحلقة المستمرة):</b> لا ينتهي بمدة زمنية، ويُكتب بجانبه «(لا ينتهي)»، ويستمر الطالب فيه ما دام مسجّلاً.</li></ul><p>أما <b>خريطة الدورات</b> فتعرض المسار: السهم يعني أن الدورة التي يخرج منها السهم شرطٌ للدورة التي يدخل إليها. ويُغلق التسجيل في الدورة بعد أسبوع من بدايتها ما لم تأذن الإدارة.</p>'],
+        ['٥. الحضور والغياب', '<ul><li>يُسجَّل الحضور في كل لقاء، ويحق للطالب تقديم إذن غياب عبر «الطلبات والعرائض» عند الضرورة.</li><li>تصل الطالب تنبيهات مبكرة حين تبلغ نسبة غيابه ١٠٪ ثم ١٨٪ ثم ٢٠٪.</li><li>إذا غاب الطالب <b>عشر مرات في شهر واحد</b> حُرم من الامتحان النهائي ولا يظهر معدله، وتُبيَّن له الأسباب في صفحته.</li></ul>'],
+        ['٦. حقوق الطالب وواجباته', '<p><b>للطالب الحق في:</b></p><ul><li>إلغاء تسجيل المادة خلال سبعة أيام من بدء الدورة دون رسوم.</li><li>تقديم إذن غياب عند الضرورة لإعادة الامتحان الذي فاته.</li><li>مراسلة مسؤول التخصص عبر الطلبات.</li><li>الاطلاع على معدله التراكمي ما لم يكن محروماً من الامتحان النهائي.</li><li>اختيار قناة وصول الإشعارات إليه: داخل المنصة، أو واتساب، أو البريد الإلكتروني.</li></ul><p><b>وعلى الطالب أن:</b></p><ul><li>يلتزم بالحضور في المواعيد، ويأتي من بداية اللقاء إلى نهايته ليُسجَّل حضوره.</li><li>يسدّد المستحقات المالية في مواعيدها، تفادياً لإيقاف الحساب أو حجب العلامات.</li><li>لا يشارك ملفات المنهج مع غيره، فهي للاستعمال الفردي.</li><li>يلتزم النزاهة الأكاديمية، فلا يغش ولا ينتحل جهد غيره.</li><li>يراسل المعلمين والإدارة عبر القنوات الرسمية في المنصة.</li><li>يسلّم الواجبات في مواعيدها، فلا تُقبل بعد إغلاق باب التسليم.</li></ul>'],
+        ['٧. حقوق المعلم وواجباته', '<p><b>للمعلم الحق في:</b></p><ul><li>ضبط الحلقة واتخاذ الإجراءات المناسبة تجاه من يخلّ بنظامها.</li><li>تحديد معايير التقييم وتوزيع العلامات وفق سياسة المادة.</li><li>رصد الحضور والغياب وفق أنظمة المنصة.</li><li>تقييم الطلاب بموضوعية وشفافية.</li></ul><p><b>وعلى المعلم أن:</b></p><ul><li>يلتزم بالمنهج ومواعيد اللقاءات المعلنة.</li><li>يُدخل العلامات في وقتها ليتابع الطالب أداءه.</li><li>يحدّد أوقاتاً لاستقبال الطلاب وإرشادهم.</li><li>يتحرّى الدقة والعدل في التصحيح ويقدّم ملاحظات موجّهة.</li><li>يُبلغ مسؤول التخصص بأي مشكلة أكاديمية.</li></ul>'],
+        ['٨. منسّق التخصص ومجلس المنسّقين', '<p>منسّق التخصص هو المسؤول الأكاديمي والإداري الأول عن برنامجه، وهو حلقة الوصل بين الطلاب والمعلمين والإدارة. من صلاحياته مراقبة سير المنهج والبتّ في طلبات إعادة الامتحان الموثّقة ومراجعة الطلبات واقتراح تحديث الخطط. ومن واجباته التنسيق بين المواعيد ومتابعة إدخال العلامات ودعم المتعثرين.</p><p>أما <b>مجلس المنسّقين العام</b> فيربط بين المواد، فيتناول كل تخصص القيم المحورية من زاويته، ليرى الطالب العلوم نسيجاً واحداً مترابطاً. وله نائب أو مساعد يمثّله عند غيابه ويحفظ سرية المعلومات.</p>'],
+        ['٩. الطلبات والعرائض', '<p>كل طلب يحصل على رقم مرجعي فريد (مثل T-0001) ويمرّ بالحالات: <b>مفتوح، قيد المعالجة، تم الرد، مغلق</b>. وتبقى جميع المراسلات محفوظة داخل الطلب توثيقاً لها. ومن الطلبات: إذن الغياب، وطلب إعادة الامتحان، والاسترحام، ومراسلة المنسّق، والشكوى أو الاقتراح، والإبلاغ عن خلل برمجي.</p>'],
+        ['١٠. الإشعارات والتواصل', '<p>تصل الإشعارات داخل المنصة دائماً، ويمكن لكل مستخدم اختيار وصولها أيضاً عبر واتساب أو البريد الإلكتروني من «الإعدادات والمظهر». وتجهّز المنصة الرسائل للمشرف في «الرسائل الصادرة» ليرسلها بنقرة واحدة. وإذا أُذن بإشعارات المتصفح ظهرت الإشعارات في شريط الهاتف.</p>'],
+        ['١١. الخصوصية', '<p>يرى كل مستخدم البيانات التي تخصّه فقط بحسب دوره وصلاحياته. ولا يجوز مشاركة رمز الدخول أو كلمة المرور مع الغير، ويحق للمدير تجديد الرمز أو تصفير كلمة المرور في أي وقت.</p>']
+    ];
+    window.renderGuide = function () { var b = $('pv-guide'); if (!b) return; b.innerHTML = '<div class="pv-card"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><h3>📖 الدليل والأنظمة</h3><button class="btn-action" onclick="window.print()">🖨️ طباعة الدليل</button></div><p class="muted-small">بسم الله الرحمن الرحيم، الحمد لله الذي هدانا لهذا وما كنا لنهتدي لولا أن هدانا الله. هذا الدليل يوضح طريقة العمل بالمنصة وما للمستخدمين وما عليهم.</p></div>' + GUIDE.map(function (g) { return '<div class="pv-card qu-guide"><h3>' + g[0] + '</h3>' + g[1] + '</div>'; }).join(''); };
+    var _ps = window.pvShow; window.pvShow = function (v) { _ps.apply(this, arguments); try { if (v === 'guide') renderGuide(); } catch (e) { console.error(e); } };
 })();
 
 </script>
