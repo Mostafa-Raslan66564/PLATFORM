@@ -6885,6 +6885,26 @@ body[data-view=guide] #pv-guide{display:block}
                 .then(m => { try { m.getAnalytics(app); } catch (e) { } })
                 .catch(() => { });
         } catch (e) { console.warn('Firebase init failed', e); }
+
+
+fetch('L https://platform-tj3w.onrender.com', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    message: 'تمت عملية الدفع بنجاح'
+  })
+})
+.then(response => response.json())
+.then(data => {
+  console.log('تم إرسال التنبيه:', data);
+})
+.catch(error => {
+  console.error('حدث خطأ أثناء الإرسال:', error);
+});
+
+        
     </script>
 </body>
 
