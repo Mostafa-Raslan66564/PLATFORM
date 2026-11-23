@@ -4241,9 +4241,55 @@ body[data-view=accounts] #pv-accounts{display:block}
 .qa-row{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid #e2e8f0;border-radius:12px;margin-bottom:8px;background:#fff}.qa-row.me{border-color:#15803d;background:#f0fdf4}.qa-i{flex:1;display:flex;flex-direction:column}.qa-i small{color:#64748b}
 
 </style>
+<style id="qu-ext7-css">
+#qu-splash{position:fixed;inset:0;z-index:100000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:radial-gradient(circle at 50% 38%,#fff 0%,#f8f1df 62%,#efe3c3 100%);opacity:1;transition:opacity .6s ease,visibility .6s;cursor:pointer}
+#qu-splash.off{opacity:0;visibility:hidden;pointer-events:none}
+#qu-splash:empty{display:flex}
+.qsp-logo{width:min(84vw,460px)}.qsp-t{font-family:'Aref Ruqaa','Amiri',serif;font-weight:700;font-size:clamp(1.8rem,7vw,2.8rem);color:#0b3a75;opacity:0;animation:qlgIn .7s ease 2.3s forwards}
+.qsp-bar{width:min(60vw,260px);height:4px;border-radius:4px;background:rgba(6,78,59,.15);overflow:hidden;margin-top:12px}.qsp-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#b8903a,#064e3b);animation:qspBar 3.7s linear forwards}
+@keyframes qspBar{to{width:100%}}
+.qlg-still .qlg *{animation:none!important;opacity:1!important;transform:none!important;stroke-dashoffset:0!important}
+/* شاشة الدخول */
+#guest-view{position:relative;isolation:isolate;padding-bottom:30px}
+.qu-bg{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.qu-bg i{position:absolute;left:var(--x);top:var(--y);width:var(--s);height:var(--s);opacity:.14;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23b8903a' d='M50 0l9.6 22.6L82 14l-8.6 22.4L100 50 73.4 63.6 82 86l-22.4-8.6L50 100l-9.6-22.6L18 86l8.6-22.4L0 50l26.6-13.6L18 14l22.4 8.6z'/%3E%3C/svg%3E") center/contain no-repeat;animation:quSpin var(--d) linear var(--l) infinite,quDrift calc(var(--d)/4) ease-in-out var(--l) infinite alternate}
+@keyframes quSpin{to{transform:rotate(360deg)}}@keyframes quDrift{from{translate:0 0}to{translate:14px -22px}}
+#guest-view .hero-banner{background:none!important;border:0!important;box-shadow:none!important;padding:4px 10px 16px!important;color:#064e3b!important}
+#guest-view .hero-banner::before{content:'بسم الله الرحمن الرحيم';display:block;font-family:'Aref Ruqaa','Amiri',serif;color:#b8903a;font-size:1.25rem;margin-bottom:6px;animation:quRise .8s ease .1s both}
+#guest-view .hero-banner h1{font-family:'Aref Ruqaa','Amiri',serif!important;font-size:clamp(1.4rem,5vw,2.1rem)!important;color:#064e3b!important;text-shadow:none!important;animation:quRise .8s ease .2s both}
+#guest-view .hero-banner::after{content:'';display:block;width:90px;height:3px;margin:12px auto 0;border-radius:3px;background:linear-gradient(90deg,transparent,#b8903a,transparent);animation:quLine 3s ease-in-out infinite}
+@keyframes quLine{0%,100%{width:60px;opacity:.6}50%{width:150px;opacity:1}}
+@keyframes quRise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+#guest-view .card{max-width:440px;margin-inline:auto;background:rgba(255,255,255,.95)!important;backdrop-filter:blur(8px);border-radius:24px!important;border:1px solid rgba(184,144,58,.4)!important;box-shadow:0 22px 55px rgba(6,78,59,.2)!important;animation:quRise .8s cubic-bezier(.2,.9,.3,1) .3s both}
+#guest-view .card h3{color:#064e3b;text-align:center;border:0}
+#guest-view .card .form-group{animation:quRise .6s ease both}#guest-view .card .form-group:nth-of-type(1){animation-delay:.55s}#guest-view .card .form-group:nth-of-type(2){animation-delay:.7s}
+#guest-view .card input{border-radius:13px!important;border:1.5px solid #cbd5e1!important;padding:12px 14px!important;transition:border-color .2s,box-shadow .25s,transform .2s}
+#guest-view .card input:focus{outline:0;border-color:#0f6b4f!important;box-shadow:0 0 0 4px rgba(15,107,79,.16)!important;transform:translateY(-1px)}
+#guest-view .card .btn-primary{position:relative;overflow:hidden;border-radius:13px!important;animation:quRise .6s ease .85s both}
+#guest-view .card .btn-primary::after{content:'';position:absolute;top:0;left:-70%;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);transform:skewX(-20deg);animation:quShine 3.4s ease-in-out 1.6s infinite}
+@keyframes quShine{0%{left:-70%}55%,100%{left:140%}}
+#guest-view .card button[onclick^="qrsOpen"]{background:#fff!important;color:#064e3b!important;border:2px solid #064e3b!important}#guest-view .card button[onclick^="qrsOpen"]::after{display:none}
+#guest-view .auth-links{animation:quRise .6s ease 1s both}
+#login-mode-toggle{display:inline-block;padding:4px 14px;border-radius:999px;background:#eef6ff;transition:transform .15s}#login-mode-toggle:hover{transform:scale(1.06)}
+/* لمسات الضغط والانتقال */
+.qu-ripw{position:relative;overflow:hidden}
+.qu-rip{position:absolute;border-radius:50%;pointer-events:none;background:rgba(255,255,255,.5);transform:scale(0);animation:quRip .65s ease-out forwards}
+@keyframes quRip{to{transform:scale(1);opacity:0}}
+button,.btn-action,.btn-primary,.pv-it,.qu-ib,.qs-b,.qu-chips button{transition:transform .14s ease,box-shadow .2s,background-color .2s}
+button:active,.btn-action:active,.btn-primary:active,.pv-it:active,.qu-ib:active,.qs-b:active,.qu-chips button:active{transform:scale(.94)}
+.pv-it:hover{transform:translateX(-4px)}
+@keyframes quView{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+body.qu-vin section[id^=pv-],body.qu-vin #admin-dashboard,body.qu-vin #student-dashboard{animation:quView .45s ease both}
+body.qu-vin .pv-card{animation:quView .5s ease both}body.qu-vin .pv-card:nth-child(2){animation-delay:.07s}body.qu-vin .pv-card:nth-child(3){animation-delay:.14s}body.qu-vin .pv-card:nth-child(4){animation-delay:.21s}
+@media(prefers-reduced-motion:reduce){#guest-view *,.qu-bg i,body.qu-vin *{animation:none!important}#qu-splash{display:none}}
+
+
+#qu-saved:empty{display:none!important}
+</style>
 </head>
 
 <body data-theme="light">
+<div id="qu-splash"></div>
 
     <div id="toast-container"></div>
 
@@ -7585,6 +7631,7 @@ body[data-view=accounts] #pv-accounts{display:block}
             document.addEventListener('click', ev => { const td = ev.target.closest && ev.target.closest('td.cell-email, td.cell-phone'); if (!td || td.querySelector('.muted-small')) return; const t = td.textContent.trim(); if (!t) return; copyText(t); showToast((td.classList.contains('cell-phone') ? 'تم نسخ الرقم: ' : 'تم نسخ البريد: ') + t); });
             /* ---------- إشعار الترحيب 3 ثوانٍ ---------- */
             function showWelcome() {
+                if (window.__splashUntil && Date.now() < window.__splashUntil + 600) return;
                 let d = $('qu-welcome'); if (!d) { d = document.createElement('div'); d.id = 'qu-welcome'; document.body.appendChild(d); }
                 d.innerHTML = '<div class="qw-box"><div class="qw-svg">' + quLogo() + '</div><b>منصة بالقرآن نحيا</b><span>أهلاً بك ' + esc((currentUser && currentUser.name) || '') + '</span></div>';
                 void d.offsetWidth; d.className = 'show'; clearTimeout(d._t); d._t = setTimeout(() => { d.className = ''; }, 5200);
@@ -9132,7 +9179,7 @@ window.QC={show:qcShow,leave:qcLeave,update:updateView,refresh:refreshStudents};
     window.quLogo = function (live) { uid++; var s = LOGO_SVG.replace(/__U__/g, 'u' + uid); return live ? s.replace('class="qlg"', 'class="qlg qlg-live"') : s; };
     function staticLogo() { uid++; return LOGO_SVG.replace(/__U__/g, 's' + uid).replace(/class="qlg-/g, 'class="qls-').replace('class="qlg"', 'class="qls"').replace(/<mask id="qm-[^"]*"[^>]*>.*?<\/mask>/, function (m) { return m.replace(/class="qls-sweep"/, '').replace(/stroke-dasharray[^ ]*/, ''); }); }
     /* شعار صفحة الدخول */
-    function hero() { var h = $('qu-hero'); if (!h) return; var put = function () { h.innerHTML = '<div class="qu-hero-logo" title="اضغط لإعادة الحركة">' + quLogo(true) + '</div>'; }; put(); h.onclick = put; }
+    function hero() { var h = $('qu-hero'); if (!h) return; var put = function (still) { h.innerHTML = '<div class="qu-hero-logo' + (still ? ' qlg-still' : '') + '" title="اضغط لإعادة الحركة">' + quLogo(true) + '</div>'; }; put(true); h.onclick = function () { put(false); }; }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', hero); else hero();
 
     /* ---------- إطار الصور ---------- */
@@ -9197,6 +9244,37 @@ window.QC={show:qcShow,leave:qcLeave,update:updateView,refresh:refreshStudents};
     async function frPdf() { if (!F.imgs.length) { T('اختر صوراً أولاً'); return; } var b = $('fr-pdf'); b.disabled = true; try { var pg = []; for (var k = 0; k < F.imgs.length; k++) { var cv = await frCanvas(k), d = cv.toDataURL('image/jpeg', 0.93).split(',')[1], bin = atob(d), u8 = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i); pg.push({ jpg: u8, w: cv.width, h: cv.height }); } dl(makePdf(pg), 'تصاميم_منصة_بالقرآن_نحيا.pdf'); } catch (e) { T('تعذّر إنشاء الملف'); } b.disabled = false; }
 
     var _ps = window.pvShow; window.pvShow = function (v) { _ps.apply(this, arguments); try { if (v !== 'cert' && window.QC) QC.leave(); if (v === 'frame') frameRender(); } catch (e) { console.error(e); } };
+})();
+
+</script>
+<script id="qu-ext6">
+/* ===== شاشة الإطلاق (تتكرر عند كل فتح) + لمسات الحركة + زخارف الدخول ===== */
+(function () {
+    var sp = document.getElementById('qu-splash'), timer = null, hiddenAt = Date.now();
+    function hide() { if (!sp) return; clearTimeout(timer); sp.className = 'off'; window.__splashUntil = Date.now(); setTimeout(function () { if (sp.className === 'off') sp.innerHTML = ''; }, 700); }
+    function show() {
+        if (!sp || !window.quLogo) return; clearTimeout(timer);
+        sp.innerHTML = '<div class="qsp-logo">' + quLogo() + '</div><div class="qsp-t">منصة بالقرآن نحيا</div><div class="qsp-bar"><i></i></div>';
+        sp.className = 'on'; window.__splashUntil = Date.now() + 3900; timer = setTimeout(hide, 3900);
+    }
+    if (sp) sp.onclick = hide; window.quSplash = show; show();
+    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') hiddenAt = Date.now(); else if (Date.now() - hiddenAt > 20000) show(); });
+    window.addEventListener('pageshow', function (e) { if (e.persisted) show(); });
+    /* الضغط على شعار المنصة يعيد الحركة */
+    document.addEventListener('click', function (ev) { var t = ev.target; if (t && t.closest && t.closest('.pv-brand, .platform-logo')) show(); });
+    /* موجة لمس خفيفة على الأزرار */
+    var SEL = 'button, .btn-action, .btn-primary, .pv-it, .qu-ib, .qs-b, .qu-chips button, .qu-qrcard';
+    document.addEventListener('pointerdown', function (ev) {
+        var el = ev.target && ev.target.closest && ev.target.closest(SEL); if (!el || el.disabled || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        if (getComputedStyle(el).position === 'static') el.classList.add('qu-ripw');
+        var r = el.getBoundingClientRect(), d = Math.max(r.width, r.height) * 1.6, s = document.createElement('span'); s.className = 'qu-rip';
+        s.style.cssText = 'width:' + d + 'px;height:' + d + 'px;left:' + (ev.clientX - r.left - d / 2) + 'px;top:' + (ev.clientY - r.top - d / 2) + 'px'; el.appendChild(s); setTimeout(function () { s.remove(); }, 650);
+    }, true);
+    /* انتقال ناعم عند تغيير الصفحة */
+    var _ps = window.pvShow; window.pvShow = function () { var r = _ps.apply(this, arguments); document.body.classList.remove('qu-vin'); void document.body.offsetWidth; document.body.classList.add('qu-vin'); setTimeout(function () { document.body.classList.remove('qu-vin'); }, 900); return r; };
+    /* زخارف متحركة خلف شاشة الدخول */
+    function deco() { var g = document.getElementById('guest-view'); if (!g || g.querySelector('.qu-bg')) return; var d = document.createElement('div'); d.className = 'qu-bg'; d.innerHTML = [[120, 4, 8, 60, 0], [70, 82, 22, 36, 6], [90, 70, 62, 48, 3], [56, 14, 68, 30, 9], [150, 48, 36, 80, 12]].map(function (a) { return '<i style="--s:' + a[0] + 'px;--x:' + a[1] + '%;--y:' + a[2] + '%;--d:' + a[3] + 's;--l:' + a[4] + 's"></i>'; }).join(''); g.insertBefore(d, g.firstChild); }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', deco); else deco();
 })();
 
 </script>
