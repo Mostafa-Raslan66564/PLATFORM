@@ -2877,7 +2877,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         }
 
         body.in-portal #admin-dashboard.pv-empty,
-        body.in-portal:is([data-view=home], [data-view=cert], [data-view=set], [data-view=roles], [data-view=trash], [data-view=reset], [data-view=qr], [data-view=outbox], [data-view=course], [data-view=map], [data-view=tickets], [data-view=guide], [data-view=frame], [data-view=accounts]) #admin-dashboard {
+        body.in-portal:is([data-view=home], [data-view=cert], [data-view=set], [data-view=roles], [data-view=trash], [data-view=reset], [data-view=qr], [data-view=outbox], [data-view=course], [data-view=map], [data-view=tickets], [data-view=guide], [data-view=frame], [data-view=accounts], [data-view=scan], [data-view=bulk]) #admin-dashboard {
             display: none !important
         }
 
@@ -4285,6 +4285,37 @@ body.qu-vin .pv-card{animation:quView .5s ease both}body.qu-vin .pv-card:nth-chi
 
 
 #qu-saved:empty{display:none!important}
+</style>
+<style id="qu-ext8-css">
+body[data-view=scan] #pv-scan{display:block}
+.sc-modes{display:flex;gap:8px;margin:8px 0;flex-wrap:wrap}.sc-modes button{flex:1;min-width:140px;padding:10px;border:1.5px solid #cbd5e1;background:#fff;border-radius:12px;font:inherit;font-weight:700;cursor:pointer}.sc-modes button.on{background:linear-gradient(135deg,#064e3b,#0f6b4f);color:#fff;border-color:transparent}
+.sc-wrap{position:relative;border-radius:16px;overflow:hidden;background:#0f172a;margin:10px 0;border:4px solid transparent;transition:border-color .2s}.sc-wrap video{display:block;width:100%;max-height:52vh;min-height:160px;object-fit:cover}
+.sc-wrap.ok{border-color:#16a34a}.sc-wrap.dup{border-color:#f59e0b}.sc-wrap.bad{border-color:#dc2626}
+.sc-actions{display:flex;gap:8px;flex-wrap:wrap}.sc-man{display:flex;gap:8px;margin-top:10px}.sc-man input{flex:1;padding:10px;border:1px solid #cbd5e1;border-radius:10px;font:inherit}
+.sc-ok b{color:#15803d}.sc-dup b{color:#b45309}.sc-bad b{color:#b91c1c}
+.sc-row{display:flex;gap:10px;align-items:center;padding:9px 12px;border-radius:10px;margin-bottom:6px;border-inline-start:5px solid}.sc-row b{flex:0 0 auto}.sc-row span{flex:1}.sc-row small{color:#64748b}
+.sc-row.sc-ok{background:#f0fdf4;border-color:#16a34a}.sc-row.sc-dup{background:#fffbeb;border-color:#f59e0b}.sc-row.sc-bad{background:#fef2f2;border-color:#dc2626}
+/* واجهة الدخول: بسم الله فقط */
+#guest-view .hero-banner>*{display:none!important}#guest-view .hero-banner::after{display:none!important}
+#guest-view .hero-banner{padding:0 10px 10px!important}
+#guest-view .hero-banner::before{font-size:clamp(1.5rem,6.5vw,2.3rem)!important;margin:0!important}
+/* تحسينات التليفون */
+@media(max-width:600px){
+ #ntf-banner{top:58px!important;font-size:.78rem!important;padding:5px 8px!important;max-width:calc(100% - 20px)!important}
+ #qu-need{padding:8px 10px;font-size:.8rem;gap:8px;flex-direction:row!important;align-items:center!important;inset-inline:8px;bottom:8px}#qu-need button{padding:6px 12px;white-space:nowrap}#qu-need i{cursor:pointer;font-style:normal;font-size:1.2rem;padding:0 4px}
+ .qu-qrgrid{grid-template-columns:repeat(2,1fr)!important;gap:8px!important}.qu-qrcard svg{width:100%!important;max-width:150px;height:auto}
+ .stats-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important}.stats-grid .stat-card{padding:10px!important;gap:8px!important}
+ .qu-hero-logo{width:min(72vw,300px)!important}
+ .sc-wrap video{max-height:44vh}
+}
+
+</style>
+<style id="qu-ext9-css">
+body[data-view=bulk] #pv-bulk{display:block}
+.bk-tbl td{padding:6px}.bk-tbl input,.bk-tbl select{width:100%;min-width:110px;padding:9px;border:1px solid #cbd5e1;border-radius:9px;font:inherit}.bk-n{font-weight:700;color:#64748b;text-align:center;width:34px}
+.bk-del{width:36px;height:36px;border:0;border-radius:9px;background:#dc2626;color:#fff;font-size:1rem;cursor:pointer}.bk-del:hover{background:#b91c1c}
+.bk-err td input{border-color:#dc2626!important;background:#fef2f2}.bk-ok{background:#f0fdf4;border:1px solid #16a34a;border-radius:10px;padding:10px;margin-bottom:8px;line-height:1.9}.bk-bad{background:#fef2f2;border:1px solid #dc2626;border-radius:10px;padding:10px}
+
 </style>
 </head>
 
@@ -5758,7 +5789,7 @@ body.qu-vin .pv-card{animation:quView .5s ease both}body.qu-vin .pv-card:nth-chi
             <div style="font-size:0.85rem; color:var(--text-muted);">المشرف: <strong>${esc(c.teacher)}</strong></div>
             <div style="font-size:0.8rem; color:var(--text-muted);">الموعد: ${esc(c.schedule || 'غير محدد')}</div>${window.courseInfo ? window.courseInfo(c) : ''}
             ${isOwner() && c.ownerName ? `<div style="font-size:0.8rem; color:var(--text-muted);">أنشأه: <strong>${esc(c.ownerName)}</strong></div>` : ''}
-            <div style="font-size:0.8rem; color:var(--text-muted);">متوسط علامات الصف: <strong>${avg}${avg === '-' ? '' : '%'}</strong></div>
+            <div style="font-size:0.8rem; color:var(--text-muted);">متوسط علامات الصف: <strong>${avg}${avg === '-' ? '' : '%'}</strong></div>${window.classGpaHtml ? window.classGpaHtml(c) : ''}
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px; flex-wrap:wrap; gap:6px;">
                 <button onclick="filterByClass(${i})" class="badge badge-class" style="cursor:pointer;border:0">${cnt[c.name] || 0} طلاب - عرض</button>
                 <button onclick="openClassroom(${i})" class="badge badge-class" style="cursor:pointer;border:0;background:#2d6a4f;color:#fff"><i class="fa-solid fa-door-open"></i> فتح الصف</button>
@@ -7444,11 +7475,11 @@ body.qu-vin .pv-card{animation:quView .5s ease both}body.qu-vin .pv-card:nth-chi
             function sideItems() {
                 const adm = isAdm(); const I = (id, icn, t, fn) => `<button class="pv-it" data-id="${id}" onclick="${fn}">${ic(icn)}${t}${id === 'notif' ? '<b id="pv-nbadge" style="display:none"></b>' : ''}</button>`;
                 let h = `<div class="pv-brand"><img src="شعار.png" onerror="this.onerror=null;this.src=FALLBACK_AVATAR"><div>بالقرآن نحيا<small>النظام الجامعي</small></div></div><div class="pv-grp">OVERVIEW</div>` + I('home', '🏠', 'الرئيسية', "pvShow('home')");
-                if (adm) { h += `<div class="pv-grp">ACADEMICS</div>` + I('classes', 'fa-layer-group', 'الصفوف والحلقات', "pvShow('classes')") + I('map', 'fa-diagram-project', 'خريطة الدورات', "pvShow('map')") + I('students', 'fa-users', 'الطلاب', "pvShow('students')") + I('cert', '🎓', 'الشهادات والوثائق', "pvShow('cert')") + I('frame', 'fa-image', 'إطار الصور', "pvShow('frame')") + I('intake', 'fa-file-arrow-up', 'رفع الملفات', "pvShow('intake')") + `<div class="pv-grp">MANAGEMENT</div>` + I('roles', '🛡️', 'الأدوار والصلاحيات', "openStaff()") + I('trash', 'fa-trash-can', 'سلة المحذوفات', "openModal('trash-modal')") + I('outbox', 'fa-paper-plane', 'الرسائل الصادرة', "pvShow('outbox')") + I('tickets', 'fa-ticket', 'الطلبات الواردة', "pvShow('tickets')") + (isOwner() ? I('reset', 'fa-key', 'إعادة تعيين كلمات المرور', "pvShow('reset')") + I('qr', 'fa-qrcode', 'رموز QR', "pvShow('qr')") : ''); }
+                if (adm) { h += `<div class="pv-grp">ACADEMICS</div>` + I('classes', 'fa-layer-group', 'الصفوف والحلقات', "pvShow('classes')") + I('map', 'fa-diagram-project', 'خريطة الدورات', "pvShow('map')") + I('students', 'fa-users', 'الطلاب', "pvShow('students')") + I('cert', '🎓', 'الشهادات والوثائق', "pvShow('cert')") + I('frame', 'fa-image', 'إطار الصور', "pvShow('frame')") + I('intake', 'fa-file-arrow-up', 'رفع الملفات', "pvShow('intake')") + `<div class="pv-grp">MANAGEMENT</div>` + I('roles', '🛡️', 'الأدوار والصلاحيات', "openStaff()") + I('trash', 'fa-trash-can', 'سلة المحذوفات', "openModal('trash-modal')") + I('outbox', 'fa-paper-plane', 'الرسائل الصادرة', "pvShow('outbox')") + I('tickets', 'fa-ticket', 'الطلبات الواردة', "pvShow('tickets')") + I('scan', 'fa-camera', 'ماسح الحضور والرموز', "pvShow('scan')") + I('bulk', 'fa-table-list', 'إضافة أسماء دفعة واحدة', "pvShow('bulk')") + (isOwner() ? I('reset', 'fa-key', 'إعادة تعيين كلمات المرور', "pvShow('reset')") + I('qr', 'fa-qrcode', 'رموز QR', "pvShow('qr')") : ''); }
                 else h += `<div class="pv-grp">ACADEMICS</div>` + I('myclass', 'fa-chalkboard-user', 'صفّي', "pvMyClass()") + I('account', '🪪', 'حسابي', "pvShow('account')") + I('map', 'fa-diagram-project', 'خريطة الدورات', "pvShow('map')") + I('tickets', 'fa-ticket', 'طلباتي', "pvShow('tickets')");
                 h += `<div class="pv-grp">MY ACCOUNT</div>` + I('notif', 'fa-bell', 'الإشعارات', "openNotifCenter()") + I('editinfo', 'fa-user-pen', 'تعديل بياناتي', "openModal('edit-my-info-modal')") + I('chpass', 'fa-key', 'تغيير كلمة المرور', "openModal('cp-modal')") + I('set', '🎨', 'الإعدادات والمظهر', "pvShow('set')") + I('accounts', 'fa-people-arrows', 'تبديل الحساب', "pvShow('accounts')") + I('guide', 'fa-book', 'الدليل والأنظمة', "pvShow('guide')") + (isOwner() ? '' : I('bug', 'fa-bug', 'الإبلاغ عن خلل (يصل للإدارة)', "qBug()")) + I('out', 'fa-right-from-bracket', 'تسجيل الخروج', "logout()") + `<div class="pv-foot" id="pv-sync">التزامن: غير مفعّل</div>`; return h;
             }
-            const TT = { accounts: 'تبديل الحساب', frame: 'إطار الصور', guide: 'الدليل والأنظمة', tickets: 'الطلبات والعرائض', roles: 'الأدوار والصلاحيات', trash: 'سلة المحذوفات', reset: 'إعادة تعيين كلمات المرور', qr: 'رموز QR', outbox: 'الرسائل الصادرة', course: 'الدورة', map: 'خريطة الدورات', home: 'الرئيسية', classes: 'الصفوف والحلقات', students: 'الطلاب', intake: 'رفع الملفات', cert: 'الشهادات والوثائق', set: 'الإعدادات والمظهر', account: 'حسابي' };
+            const TT = { bulk: 'إضافة أسماء دفعة واحدة', scan: 'ماسح الحضور والرموز', accounts: 'تبديل الحساب', frame: 'إطار الصور', guide: 'الدليل والأنظمة', tickets: 'الطلبات والعرائض', roles: 'الأدوار والصلاحيات', trash: 'سلة المحذوفات', reset: 'إعادة تعيين كلمات المرور', qr: 'رموز QR', outbox: 'الرسائل الصادرة', course: 'الدورة', map: 'خريطة الدورات', home: 'الرئيسية', classes: 'الصفوف والحلقات', students: 'الطلاب', intake: 'رفع الملفات', cert: 'الشهادات والوثائق', set: 'الإعدادات والمظهر', account: 'حسابي' };
             window.pvMyClass = function () { const me = myRec(); const i = (appData.classes || []).findIndex(c => me && c.name === me.className); if (i < 0) { showToast('أنت غير مسجّل في صف'); return; } pvSide(false); openMyClassroom(i); };
             window.pvSide = function (o) { const s = $('pv-side'); if (!s) return; s.classList.toggle('open', o === undefined ? !s.classList.contains('open') : o); $('pv-scrim').classList.toggle('open', s.classList.contains('open')); };
             window.pvShow = function (v) {
@@ -7733,7 +7764,10 @@ body.qu-vin .pv-card{animation:quView .5s ease both}body.qu-vin .pv-card:nth-chi
     function newTok() { var a = 'abcdefghjkmnpqrstuvwxyz23456789', r = crypto.getRandomValues(new Uint8Array(20)); return Array.from(r, function (x) { return a[x % a.length]; }).join(''); }
     function people() { return (appData.students || []).concat(appData.users || []).filter(function (x) { return x && x.email && lc(x.email) !== lc(appData.adminEmail); }); }
     function ensureQr(email) { email = lc(email); if (!appData.qr) appData.qr = {}; if (!appData.qr[email] || !appData.qr[email].k) { appData.qr[email] = { k: newTok(), t: Date.now() }; return true; } return false; }
-    function payload(email) { return 'QURAN|' + lc(email) + '|' + appData.qr[lc(email)].k; }
+    function b64u(t) { return btoa(unescape(encodeURIComponent(t))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+    function unb64u(t) { t = t.replace(/-/g, '+').replace(/_/g, '/'); while (t.length % 4) t += '='; return decodeURIComponent(escape(atob(t))); }
+    function payload(email) { var e = lc(email); return location.href.split('#')[0].split('?')[0] + '#qr=' + b64u(e + '|' + appData.qr[e].k); }
+    window.qrNorm = function (t) { t = String(t || '').trim(); var i = t.indexOf('#qr='); if (i >= 0) { try { var d = unb64u(t.slice(i + 4)), k = d.lastIndexOf('|'); return 'QURAN|' + d.slice(0, k) + '|' + d.slice(k + 1); } catch (e) { return t; } } return t; };
     function findPerson(email) { email = lc(email); return people().find(function (x) { return lc(x.email) === email; }); }
     window.qrEnsure = ensureQr; window.qrPayload = payload; window.qrPeople = people;
     window.qrShow = function (email) {
@@ -7764,7 +7798,7 @@ body.qu-vin .pv-card{animation:quView .5s ease both}body.qu-vin .pv-card:nth-chi
         cv.width = w; cv.height = h; var c = cv.getContext('2d', { willReadFrequently: true }); c.drawImage(src, 0, 0, w, h);
         var im = c.getImageData(0, 0, w, h), r2 = window.jsQR(im.data, w, h); return r2 ? r2.data : null;
     }
-    function status(m) { var e = $('qrs-status'); if (e) e.textContent = m; }
+    function status(m) { var e = $('qrs-status'); if (e) e.textContent = m; var md = $('qrs-modal'); if (!md || !md.classList.contains('active')) toast(m); }
     window.qrsStop = function () { clearTimeout(timer); timer = null; if (stream) { stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; } var v = $('qrs-video'); if (v) v.srcObject = null; };
     window.qrsOpen = async function () {
         openModal('qrs-modal'); status('جارٍ تشغيل الكاميرا…');
@@ -7778,7 +7812,7 @@ body.qu-vin .pv-card{animation:quView .5s ease both}body.qu-vin .pv-card:nth-chi
         try { var bm = await createImageBitmap(f), t = await decode(bm, bm.width, bm.height); if (t) window.qrLogin(t); else status('لم يتم العثور على رمز QR في الصورة'); } catch (e) { status('تعذّر قراءة الصورة'); }
     };
     window.qrLogin = async function (text) {
-        var m = String(text || '').trim().split('|');
+        var m = window.qrNorm(text).split('|');
         if (m.length !== 3 || m[0] !== 'QURAN') { status('هذا ليس رمز دخول صالح'); window.qrsStop(); setTimeout(function () { if ($('qrs-modal').classList.contains('active')) window.qrsOpen(); }, 1200); return; }
         window.qrsStop(); status('جارٍ التحقق…');
         try { if (window.__pullNow) await Promise.race([window.__pullNow(), new Promise(function (r) { setTimeout(r, 3000); })]); } catch (e) { }
@@ -8178,9 +8212,9 @@ body.qu-vin .pv-card{animation:quView .5s ease both}body.qu-vin .pv-card:nth-chi
     /* ---------- تنبيه إكمال البيانات (تاريخ الميلاد إجباري) ---------- */
     function needBar() {
         var el = $('qu-need'), rec = meRec(), need = !!currentUser && rec && !rec.birth;
-        if (!need) { if (el) el.remove(); return; }
+        if (!need || (function () { try { return sessionStorage.getItem('qu_need_hide'); } catch (e) { return false; } })()) { if (el) el.remove(); return; }
         if (!el) { el = document.createElement('div'); el.id = 'qu-need'; document.body.appendChild(el); }
-        el.innerHTML = '<span>⚠️ يرجى إكمال بياناتك: <b>تاريخ الميلاد</b> (إجباري ليُحسب العمر)</span><button type="button" onclick="openModal(\'edit-my-info-modal\')">إكمال الآن</button>';
+        el.innerHTML = '<span>⚠️ أكمل <b>تاريخ ميلادك</b> (إجباري)</span><button type="button" onclick="openModal(\'edit-my-info-modal\')">إكمال</button><i title="لاحقاً" onclick="try{sessionStorage.setItem(\'qu_need_hide\',1)}catch(e){}this.parentNode.remove()">×</i>';
         if (!rec.birthAsk) { rec.birthAsk = 1; try { notify([rec.email], { type: 'info', title: 'أكمل بياناتك', text: 'نرجو إدخال تاريخ ميلادك (حقل إجباري) من «تعديل بياناتي».', self: true }); } catch (e) { } }
     }
     window.needBar = needBar; setInterval(function () { try { needBar(); } catch (e) { } }, 3000);
@@ -9277,6 +9311,172 @@ window.QC={show:qcShow,leave:qcLeave,update:updateView,refresh:refreshStudents};
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', deco); else deco();
 })();
 
+</script>
+<script id="qu-ext7">
+/* ===== ماسح الرموز المتواصل: تسجيل الحضور + فحص الرموز (للمدير والمشرفين) ===== */
+(function () {
+    var $ = function (id) { return document.getElementById(id); };
+    function lc(s) { return String(s || '').trim().toLowerCase(); }
+    function X(s) { return esc(s); }
+    function T(m) { showToast(m); }
+    function admin() { try { return !!currentUser && (isOwner() || hasStaffAccess(currentUser)); } catch (e) { return false; } }
+    function cls() { return appData.classes || []; }
+    function persons() { return (appData.students || []).concat(appData.users || []); }
+    function today() { return new Date().toLocaleDateString('en-CA'); }
+    var a0 = $('pv-set'); if (a0) a0.insertAdjacentHTML('afterend', '<section id="pv-scan" class="qu-pg"></section>');
+
+    /* الأيام المفتوحة (جلسة مسح لم تُنهَ) لا تدخل في حساب الغياب حتى تُنهى */
+    var _as = window.attStats; window.attStats = function (c) {
+        var a = (c && c.attendance) || {}, any = Object.keys(a).some(function (d) { return a[d] && a[d].open; }); if (!any) return _as.apply(this, arguments);
+        var f = {}; Object.keys(a).forEach(function (d) { if (!(a[d] && a[d].open)) f[d] = a[d]; }); var saved = c.attendance; c.attendance = f; try { return _as.apply(this, arguments); } finally { c.attendance = saved; }
+    };
+
+    var S = { mode: 'att', cls: '', date: '', stream: null, timer: null, busy: false, last: {}, marked: {}, list: [], n: { ok: 0, dup: 0, bad: 0 } }, jsq = null;
+    function beep(k) { try { var C = window.AudioContext || window.webkitAudioContext, c = new C(), o = c.createOscillator(), g = c.createGain(); o.connect(g); g.connect(c.destination); o.type = k === 'ok' ? 'sine' : (k === 'dup' ? 'triangle' : 'sawtooth'); o.frequency.value = k === 'ok' ? 880 : (k === 'dup' ? 520 : 200); g.gain.value = .12; o.start(); o.stop(c.currentTime + (k === 'ok' ? .12 : .25)); setTimeout(function () { c.close(); }, 400); } catch (e) { } try { navigator.vibrate && navigator.vibrate(k === 'ok' ? 60 : [80, 60, 80]); } catch (e) { } }
+    function flash(k) { var w = $('sc-wrap'); if (!w) return; w.className = 'sc-wrap ' + k; setTimeout(function () { w.className = 'sc-wrap'; }, 600); }
+    function log(k, name, msg) { S.n[k]++; S.list.unshift({ k: k, name: name, msg: msg, t: new Date().toLocaleTimeString('ar') }); if (S.list.length > 60) S.list.pop(); beep(k); flash(k); paint(); }
+    function paint() {
+        var st = $('sc-stats'), l = $('sc-list'); if (!st) return;
+        st.innerHTML = '<span class="sc-ok">✓ ناجح: <b>' + S.n.ok + '</b></span><span class="sc-dup">↻ مكرر: <b>' + S.n.dup + '</b></span><span class="sc-bad">✗ مرفوض: <b>' + S.n.bad + '</b></span>';
+        l.innerHTML = S.list.map(function (r) { return '<div class="sc-row sc-' + r.k + '"><b>' + X(r.name) + '</b><span>' + X(r.msg) + '</span><small>' + r.t + '</small></div>'; }).join('') || '<p class="muted-small">لم يُمسح أي رمز بعد.</p>';
+    }
+    function members(c) { return (appData.students || []).filter(function (s) { return s.className === c.name && isStudentX(s); }); }
+    function personByEmail(e) { return persons().find(function (x) { return lc(x.email) === e; }); }
+    function mark(st, c) {
+        c.attendance = c.attendance || {}; var d = S.date, rec = c.attendance[d];
+        if (!rec) { var ids = members(c).map(function (s) { return s.id; }); rec = c.attendance[d] = { all: ids, absent: ids.slice(), open: true, by: lc(currentUser.email), via: 'qr' }; }
+        if (rec.all.indexOf(st.id) < 0) rec.all.push(st.id); var i = rec.absent.indexOf(st.id);
+        if (i < 0) { log('dup', st.name, S.marked[st.id] ? 'مسجَّل حضوره قبل قليل' : 'حضوره مسجّل مسبقاً لهذا اليوم'); return; }
+        rec.absent.splice(i, 1); S.marked[st.id] = 1; saveData(); log('ok', st.name, 'تم تسجيل الحضور ✓');
+    }
+    function handle(text) {
+        var now = Date.now(); if (S.last[text] && now - S.last[text] < 2500) return; S.last[text] = now;
+        var m = (window.qrNorm ? window.qrNorm(text) : String(text || '')).split('|'); if (m.length !== 3 || m[0] !== 'QURAN') { log('bad', 'رمز غير معروف', 'ليس رمز المنصة'); return; }
+        var em = lc(m[1]), q = appData.qr && appData.qr[em], p = personByEmail(em);
+        if (!p) { log('bad', em, 'الحساب غير موجود'); return; }
+        if (!q || q.k !== m[2]) { log('bad', p.name, 'الرمز غير صالح أو قديم'); return; }
+        if (S.mode === 'check') { log('ok', p.name, 'الرمز سليم ويعمل ✓ (' + (p.id || '') + ')'); return; }
+        var c = cls().find(function (x) { return x.name === S.cls; }); if (!c) { T('اختر الصف أولاً'); return; }
+        var st = members(c).find(function (s) { return lc(s.email) === em; }); if (!st) { log('bad', p.name, 'غير مسجَّل بهذا الصف'); return; }
+        mark(st, c);
+    }
+    window.scHandle = handle;
+    function manual() {
+        var v = ($('sc-id').value || '').replace(/\D/g, ''); if (!v) return; $('sc-id').value = '';
+        var c = cls().find(function (x) { return x.name === S.cls; }); if (!c) { T('اختر الصف أولاً'); return; }
+        var st = members(c).find(function (s) { return String(s.id) === v || String(s.id).endsWith('-' + v); });
+        if (!st) { log('bad', v, 'معرّف غير موجود بهذا الصف'); return; } mark(st, c);
+    }
+    function finalize(quiet) {
+        var c = cls().find(function (x) { return x.name === S.cls; }); if (!c || !c.attendance) return; var rec = c.attendance[S.date]; if (!rec || !rec.open) return;
+        delete rec.open; saveData(); if (!quiet) T('تم حفظ الحضور: ' + (rec.all.length - rec.absent.length) + ' حاضر، ' + rec.absent.length + ' غائب');
+    }
+    window.scEnd = function () { stop(); finalize(false); };
+    function stop() { clearTimeout(S.timer); S.timer = null; if (S.stream) { S.stream.getTracks().forEach(function (t) { t.stop(); }); S.stream = null; } var v = $('sc-video'); if (v) v.srcObject = null; var b = $('sc-start'); if (b) b.textContent = 'تشغيل الكاميرا'; }
+    window.scStop = stop;
+    async function decode(v) {
+        if ('BarcodeDetector' in window) { try { var r = await new BarcodeDetector({ formats: ['qr_code'] }).detect(v); return r.map(function (x) { return x.rawValue; }).filter(Boolean); } catch (e) { return []; } }
+        if (!window.jsQR) { if (!jsq) jsq = new Promise(function (res) { var s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js'; s.onload = function () { res(); }; s.onerror = function () { res(); }; document.head.appendChild(s); }); await jsq; if (!window.jsQR) return []; }
+        var cv = decode.cv || (decode.cv = document.createElement('canvas')); cv.width = v.videoWidth; cv.height = v.videoHeight; var c = cv.getContext('2d', { willReadFrequently: true }); c.drawImage(v, 0, 0); var d = c.getImageData(0, 0, cv.width, cv.height), r2 = window.jsQR(d.data, cv.width, cv.height); return r2 ? [r2.data] : [];
+    }
+    window.scStart = async function () {
+        if (S.stream) { stop(); return; }
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.isSecureContext) { T('الكاميرا تحتاج فتح الموقع عبر https. يمكنك إدخال المعرّف يدوياً.'); return; }
+        try { S.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false }); } catch (e) { T('تعذّر تشغيل الكاميرا. اسمح بالوصول إليها.'); return; }
+        var v = $('sc-video'); v.srcObject = S.stream; try { await v.play(); } catch (e) { } $('sc-start').textContent = 'إيقاف الكاميرا';
+        (function loop() { S.timer = setTimeout(async function () { if (!S.stream) return; if (!S.busy && v.videoWidth) { S.busy = true; try { var r = await decode(v); for (var k = 0; k < r.length; k++) handle(r[k]); } catch (e) { } S.busy = false; } loop(); }, 220); })();
+    };
+    function ui() {
+        var b = $('pv-scan'); if (!b) return; if (!admin()) { b.innerHTML = '<div class="pv-card"><p>هذه الصفحة للمدير والمشرفين.</p></div>'; return; }
+        S.date = S.date || today(); if (!S.cls && cls()[0]) S.cls = cls()[0].name;
+        b.innerHTML = '<div class="pv-card"><h3>📷 ماسح الحضور والرموز</h3><p class="muted-small">شغّل الكاميرا وامسح الرموز واحداً تلو الآخر بدون ما تخرج من الماسح، وتوقّف أنت يدوياً. كل رمز يُعالج فوراً وتظهر نتيجته أسفل الكاميرا.</p>'
+            + '<div class="sc-modes"><button type="button" data-m="att" class="' + (S.mode === 'att' ? 'on' : '') + '">✅ تسجيل الحضور</button><button type="button" data-m="check" class="' + (S.mode === 'check' ? 'on' : '') + '">🔍 فحص الرموز</button></div>'
+            + '<div id="sc-attbox" class="qu-grid" style="' + (S.mode === 'att' ? '' : 'display:none') + '"><label>الصف / الدورة<select id="sc-cls">' + cls().map(function (c) { return '<option' + (c.name === S.cls ? ' selected' : '') + '>' + X(c.name) + '</option>'; }).join('') + '</select></label><label>تاريخ الحضور<input type="date" id="sc-date" value="' + X(S.date) + '"></label></div>'
+            + '<p class="muted-small" id="sc-hint">' + (S.mode === 'att' ? 'من لم يُمسح رمزه يُحتسب غائباً عند «إنهاء الجلسة وحفظ». يمكنك إكمال الجلسة لاحقاً بنفس الصف والتاريخ.' : 'يتحقق من أن رمز كل شخص صالح ويعمل للدخول، دون تسجيل أي بيانات.') + '</p>'
+            + '<div class="sc-wrap" id="sc-wrap"><video id="sc-video" playsinline muted></video></div>'
+            + '<div class="sc-actions"><button type="button" class="btn-primary" id="sc-start">تشغيل الكاميرا</button>' + (S.mode === 'att' ? '<button type="button" class="btn-primary" style="background:#15803d" id="sc-end">إنهاء الجلسة وحفظ</button>' : '') + '<button type="button" class="btn-action" id="sc-clear">مسح السجل</button></div>'
+            + (S.mode === 'att' ? '<div class="sc-man"><input id="sc-id" inputmode="numeric" placeholder="أو اكتب المعرّف (أرقام)"><button type="button" class="btn-action" id="sc-add">تسجيل حضور</button></div>' : '')
+            + '<div class="qu-stats" id="sc-stats"></div></div><div class="pv-card"><div id="sc-list"></div></div>';
+        Array.prototype.forEach.call(b.querySelectorAll('.sc-modes button'), function (x) { x.onclick = function () { if (S.mode !== x.dataset.m) { stop(); finalize(true); S.mode = x.dataset.m; S.list = []; S.n = { ok: 0, dup: 0, bad: 0 }; S.marked = {}; S.last = {}; ui(); } }; });
+        $('sc-start').onclick = window.scStart; $('sc-clear').onclick = function () { S.list = []; S.n = { ok: 0, dup: 0, bad: 0 }; S.marked = {}; paint(); };
+        if ($('sc-end')) $('sc-end').onclick = window.scEnd; if ($('sc-add')) { $('sc-add').onclick = manual; $('sc-id').onkeydown = function (e) { if (e.key === 'Enter') manual(); }; }
+        if ($('sc-cls')) { $('sc-cls').onchange = function () { finalize(true); S.cls = this.value; S.marked = {}; }; $('sc-date').onchange = function () { finalize(true); S.date = this.value || today(); S.marked = {}; }; }
+        paint();
+    }
+    var _ps = window.pvShow; window.pvShow = function (v) { if (v !== 'scan' && (S.stream || S.mode === 'att')) { var wasOn = !!S.stream; stop(); try { finalize(true); } catch (e) { } } _ps.apply(this, arguments); try { if (v === 'scan') ui(); } catch (e) { console.error(e); } };
+    window.addEventListener('pagehide', function () { try { stop(); finalize(true); flushSave(); } catch (e) { } });
+    /* إشعار «لديك إشعارات» يختفي تلقائياً بعد قليل */
+    var _bu = window.bannerUpdate, bt = null; if (_bu) window.bannerUpdate = function (c) { var r = _bu.apply(this, arguments); try { var b = document.getElementById('ntf-banner'); if (b && b.style.display === 'flex' && !bt) { bt = setTimeout(function () { bt = null; _bnDismiss = unreadCount(); _bu(_bnDismiss); }, 7000); } } catch (e) { } return r; };
+})();
+
+</script>
+<script id="qu-ext8">
+/* ===== إضافة أسماء دفعة واحدة (جدول: Enter يضيف سطراً، الزر الأحمر يحذفه) ===== */
+(function () {
+    var $ = function (id) { return document.getElementById(id); };
+    function X(s) { return esc(s); }
+    function T(m) { showToast(m); }
+    function admin() { try { return !!currentUser && (isOwner() || hasStaffAccess(currentUser)); } catch (e) { return false; } }
+    var a0 = $('pv-set'); if (a0) a0.insertAdjacentHTML('afterend', '<section id="pv-bulk" class="qu-pg"></section>');
+    function countryOpts(sel) { return (window.QU_COUNTRIES || [['لبنان', 1]]).map(function (c) { return '<option value="' + c[1] + '"' + (String(c[1]) === String(sel) ? ' selected' : '') + '>' + c[0] + '</option>'; }).join(''); }
+    function rowHtml(n, country) { return '<tr class="bk-r"><td class="bk-n">' + n + '</td><td><input class="bk-name" placeholder="الاسم الكامل" autocomplete="off"></td><td><input class="bk-birth" type="date"></td><td><input class="bk-phone" inputmode="tel" placeholder="اختياري"></td><td><input class="bk-email" type="email" placeholder="اختياري" autocomplete="off"></td><td><select class="bk-country">' + countryOpts(country) + '</select></td><td><button type="button" class="bk-del" title="حذف السطر">✕</button></td></tr>'; }
+    function renum() { Array.prototype.forEach.call(document.querySelectorAll('#bk-body .bk-r'), function (r, i) { r.firstChild.textContent = i + 1; }); var n = document.querySelectorAll('#bk-body .bk-r .bk-name').length, filled = Array.prototype.filter.call(document.querySelectorAll('#bk-body .bk-name'), function (x) { return x.value.trim(); }).length, b = $('bk-save'); if (b) b.textContent = 'حفظ الكل (' + filled + ')'; }
+    function addRow(focus) {
+        var body = $('bk-body'); body.insertAdjacentHTML('beforeend', rowHtml(body.children.length + 1, $('bk-country').value)); var tr = body.lastElementChild; renum();
+        if (focus) tr.querySelector('.bk-name').focus(); return tr;
+    }
+    window.bkAdd = addRow;
+    function ui() {
+        var b = $('pv-bulk'); if (!b) return; if (!admin()) { b.innerHTML = '<div class="pv-card"><p>هذه الصفحة للمدير والمشرفين.</p></div>'; return; }
+        b.innerHTML = '<div class="pv-card"><h3>➕ إضافة أسماء دفعة واحدة</h3><p class="muted-small">اكتب الاسم ثم اضغط <b>Enter</b> فينزل سطر جديد لإضافة الاسم التالي، وهكذا. الزر الأحمر يحذف السطر. تاريخ الميلاد إجباري (اكتبه لكل سطر أو حدّد تاريخاً افتراضياً أدناه). من لم تكتب بريده يُسجَّل بلا بريد ويحصل على رمز QR.</p>'
+            + '<div class="qu-grid"><label>الصف / الدورة<select id="bk-cls">' + (appData.classes || []).map(function (c) { return '<option>' + X(c.name) + '</option>'; }).join('') + '</select></label><label>الدولة الافتراضية<select id="bk-country">' + countryOpts(1) + '</select></label><label>تاريخ ميلاد افتراضي (اختياري)<input type="date" id="bk-defbirth"></label></div></div>'
+            + '<div class="pv-card"><div class="table-container"><table class="qu-tbl bk-tbl"><thead><tr><th>#</th><th>الاسم الكامل *</th><th>تاريخ الميلاد *</th><th>الهاتف</th><th>البريد</th><th>الدولة</th><th></th></tr></thead><tbody id="bk-body"></tbody></table></div>'
+            + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button type="button" class="btn-action" id="bk-plus">+ سطر جديد</button><button type="button" class="btn-primary" style="width:auto;padding:10px 26px" id="bk-save">حفظ الكل (0)</button><button type="button" class="btn-action" style="background:#64748b" id="bk-clear">مسح الجدول</button></div><div id="bk-res" style="margin-top:12px"></div></div>';
+        var body = $('bk-body');
+        body.addEventListener('keydown', function (e) { if (e.key !== 'Enter' || !e.target.matches('input')) return; e.preventDefault(); var tr = e.target.closest('tr'); if (tr.nextElementSibling) tr.nextElementSibling.querySelector(e.target.className.indexOf('bk-name') >= 0 ? '.bk-name' : 'input').focus(); else addRow(true); });
+        body.addEventListener('input', renum);
+        body.addEventListener('click', function (e) { var d = e.target.closest('.bk-del'); if (!d) return; var tr = d.closest('tr'); if (body.children.length > 1) tr.remove(); else tr.querySelectorAll('input').forEach(function (i) { i.value = ''; }); renum(); });
+        $('bk-plus').onclick = function () { addRow(true); }; $('bk-clear').onclick = function () { body.innerHTML = ''; addRow(true); $('bk-res').innerHTML = ''; }; $('bk-save').onclick = save; $('bk-country').onchange = function () { Array.prototype.forEach.call(body.querySelectorAll('.bk-country'), function (s) { s.value = $('bk-country').value; }); };
+        addRow(true);
+    }
+    async function save() {
+        var rows = Array.prototype.filter.call(document.querySelectorAll('#bk-body .bk-r'), function (r) { return r.querySelector('.bk-name').value.trim(); }); if (!rows.length) { T('اكتب اسماً واحداً على الأقل'); return; }
+        var def = $('bk-defbirth').value, cname = $('bk-cls').value, ok = 0, bad = [], ids = [], btn = $('bk-save'); btn.disabled = true;
+        rows.forEach(function (r) { r.classList.remove('bk-err'); });
+        for (var i = 0; i < rows.length; i++) {
+            var r = rows[i], name = r.querySelector('.bk-name').value.trim(), birth = r.querySelector('.bk-birth').value || def, phone = r.querySelector('.bk-phone').value.trim(), email = r.querySelector('.bk-email').value.trim(), country = r.querySelector('.bk-country').value;
+            if (!birth) { r.classList.add('bk-err'); bad.push(name + ' (بلا تاريخ ميلاد)'); continue; }
+            var n0 = appData.students.length; openAddStudentModal();
+            $('new-name').value = name; $('new-email').value = email; $('no-email').checked = !email; try { toggleNoField('email'); } catch (e) { }
+            $('new-phone').value = phone; $('no-phone').checked = !phone; try { toggleNoField('phone'); } catch (e) { }
+            if (cname) $('new-class-select').value = cname; $('new-country').value = country; $('new-hijri').value = hijriYear(); $('new-birth').value = birth;
+            await saveUserRecord({ preventDefault: function () { } });
+            if (appData.students.length > n0) { ok++; ids.push(name + ' ← ' + appData.students[appData.students.length - 1].id); r.remove(); } else { r.classList.add('bk-err'); bad.push(name); }
+        }
+        btn.disabled = false; renum(); if (!$('bk-body').children.length) addRow(false);
+        $('bk-res').innerHTML = (ok ? '<div class="bk-ok">✓ تمت إضافة <b>' + ok + '</b> اسم:<br>' + ids.map(X).join('<br>') + '</div>' : '') + (bad.length ? '<div class="bk-bad">✗ لم يُضَف: ' + bad.map(X).join('، ') + ' (تحقق من البريد المكرر أو تاريخ الميلاد)</div>' : '');
+        if (ok) T('تمت إضافة ' + ok + ' اسم'); try { if (typeof ensureEmails === 'function') ensureEmails(); } catch (e) { }
+    }
+    var _ps = window.pvShow; window.pvShow = function (v) { _ps.apply(this, arguments); try { if (v === 'bulk') ui(); } catch (e) { console.error(e); } };
+    /* فتح الرابط من كاميرا الهاتف: يسجّل دخول صاحب الرمز مباشرة */
+    function hashLogin() { var h = location.hash || ''; if (h.indexOf('#qr=') !== 0) return; var t = window.qrNorm ? window.qrNorm(h) : ''; try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { } if (t && window.qrLogin) window.qrLogin(t); }
+    if (document.readyState === 'complete') setTimeout(hashLogin, 400); else window.addEventListener('load', function () { setTimeout(hashLogin, 400); }); window.addEventListener('hashchange', function () { setTimeout(hashLogin, 100); });
+})();
+
+</script>
+<script id="qu-ext9">
+/* ===== معدل (GPA) لكل صف ===== */
+(function () {
+    window.classGpa = function (c) {
+        var ms = (appData.students || []).filter(function (s) { return s.className === c.name && isStudentX(s); }), v = [];
+        ms.forEach(function (s) { var g = gpaOf(s); if (g != null && !isNaN(g)) v.push(g); });
+        return { avg: v.length ? v.reduce(function (a, b) { return a + b; }, 0) / v.length : null, n: v.length, total: ms.length };
+    };
+    window.classGpaHtml = function (c) {
+        var r = classGpa(c), col = r.avg == null ? '#64748b' : (r.avg >= 3.5 ? '#15803d' : (r.avg >= 2 ? '#b45309' : '#b91c1c'));
+        return '<div style="font-size:0.8rem;color:var(--text-muted)">معدل الصف (GPA): <strong style="color:' + col + '">' + (r.avg == null ? '— (لا توجد علامات بعد)' : r.avg.toFixed(2) + ' من 4.00') + '</strong>' + (r.avg == null ? '' : ' <small>(' + r.n + ' من ' + r.total + ' طالب)</small>') + '</div>';
+    };
+})();
 </script>
 <script>
 /* ===== الدخول بالبصمة (WebAuthn) — يعمل على نفس الجهاز بعد تفعيله مرة واحدة ===== */
