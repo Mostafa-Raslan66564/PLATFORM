@@ -4317,6 +4317,37 @@ body[data-view=bulk] #pv-bulk{display:block}
 .bk-err td input{border-color:#dc2626!important;background:#fef2f2}.bk-ok{background:#f0fdf4;border:1px solid #16a34a;border-radius:10px;padding:10px;margin-bottom:8px;line-height:1.9}.bk-bad{background:#fef2f2;border:1px solid #dc2626;border-radius:10px;padding:10px}
 
 </style>
+<style id="qu-ext10-css">
+/* لا حركة على عناصر القائمة عند اللمس + انتقال الصفحة بظهور فقط */
+.pv-it:hover,.pv-it:active,#qu-bnav button:active,.qm-t:active{transform:none!important}
+@keyframes quView{from{opacity:0}to{opacity:1}}
+body.qu-vin .pv-card{animation-duration:.3s!important}
+#qu-bnav,#qu-more{display:none}
+@media(max-width:860px){
+ body.in-portal #pv-side,body.in-portal #pv-scrim,body.in-portal #pv-burger{display:none!important}
+ body.qu-hasnav{padding-bottom:calc(78px + env(safe-area-inset-bottom))!important}
+ #qu-bnav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;inset-inline:0;bottom:0;z-index:9990;background:rgba(255,255,255,.97);backdrop-filter:blur(10px);border-top:2px solid #b8903a;padding:6px 4px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px rgba(0,0,0,.14)}
+ #qu-bnav button{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:0;padding:7px 2px;font:inherit;font-size:.72rem;color:#475569;font-weight:700;border-radius:12px;cursor:pointer;transition:background .2s,color .2s}
+ #qu-bnav button i{font-style:normal;font-size:1.4rem;line-height:1}
+ #qu-bnav button.on{color:#064e3b;background:#ecfdf5}
+ #qu-bnav b{position:absolute;top:2px;inset-inline-end:20%;background:#ef4444;color:#fff;border-radius:999px;font-size:.62rem;padding:0 5px;min-width:16px;text-align:center}
+ #qu-need{bottom:calc(84px + env(safe-area-inset-bottom))!important}
+ #toast-container{bottom:calc(88px + env(safe-area-inset-bottom))!important;right:10px!important}
+ #qu-more{display:block;position:fixed;inset:0;z-index:9995;visibility:hidden}
+ #qu-more.on{visibility:visible}.qm-bg{position:absolute;inset:0;background:rgba(0,0,0,.42);opacity:0;transition:opacity .25s}
+ .qm-sheet{position:absolute;inset-inline:0;bottom:0;max-height:80vh;overflow:auto;background:#fff;border-radius:24px 24px 0 0;padding:10px 14px calc(20px + env(safe-area-inset-bottom));transform:translateY(100%);transition:transform .3s cubic-bezier(.2,.9,.3,1);box-shadow:0 -10px 30px rgba(0,0,0,.2)}
+ #qu-more.on .qm-bg{opacity:1}#qu-more.on .qm-sheet{transform:none}
+ .qm-grab{width:46px;height:5px;border-radius:5px;background:#cbd5e1;margin:2px auto 8px}
+ .qm-g{font-weight:800;color:#64748b;font-size:.8rem;margin:12px 4px 6px}
+ .qm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+ .qm-t{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 4px;border:1px solid #e2e8f0;border-radius:14px;background:#f8fafc;font:inherit;font-size:.76rem;font-weight:700;color:#0f172a;cursor:pointer;position:relative;text-align:center}
+ .qm-t i{font-style:normal;font-size:1.55rem}.qm-t.out{color:#b91c1c;background:#fef2f2;border-color:#fecaca}
+ .qm-t b{position:absolute;top:6px;inset-inline-end:8px;background:#ef4444;color:#fff;border-radius:999px;font-size:.62rem;padding:0 6px}
+}
+
+
+@media(max-width:860px){#qu-more{z-index:99995!important}#qu-need{z-index:9985!important}}
+</style>
 </head>
 
 <body data-theme="light">
@@ -9299,7 +9330,7 @@ window.QC={show:qcShow,leave:qcLeave,update:updateView,refresh:refreshStudents};
     /* موجة لمس خفيفة على الأزرار */
     var SEL = 'button, .btn-action, .btn-primary, .pv-it, .qu-ib, .qs-b, .qu-chips button, .qu-qrcard';
     document.addEventListener('pointerdown', function (ev) {
-        var el = ev.target && ev.target.closest && ev.target.closest(SEL); if (!el || el.disabled || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        var el = ev.target && ev.target.closest && ev.target.closest(SEL); if (!el || el.disabled || el.classList.contains('pv-it') || el.closest('#qu-bnav, #qu-more') || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         if (getComputedStyle(el).position === 'static') el.classList.add('qu-ripw');
         var r = el.getBoundingClientRect(), d = Math.max(r.width, r.height) * 1.6, s = document.createElement('span'); s.className = 'qu-rip';
         s.style.cssText = 'width:' + d + 'px;height:' + d + 'px;left:' + (ev.clientX - r.left - d / 2) + 'px;top:' + (ev.clientY - r.top - d / 2) + 'px'; el.appendChild(s); setTimeout(function () { s.remove(); }, 650);
@@ -9477,6 +9508,54 @@ window.QC={show:qcShow,leave:qcLeave,update:updateView,refresh:refreshStudents};
         return '<div style="font-size:0.8rem;color:var(--text-muted)">معدل الصف (GPA): <strong style="color:' + col + '">' + (r.avg == null ? '— (لا توجد علامات بعد)' : r.avg.toFixed(2) + ' من 4.00') + '</strong>' + (r.avg == null ? '' : ' <small>(' + r.n + ' من ' + r.total + ' طالب)</small>') + '</div>';
     };
 })();
+</script>
+<script id="qu-ext10">
+/* ===== شريط تنقل سفلي على الهاتف بدل القائمة الجانبية المنزلقة ===== */
+(function () {
+    var $ = function (id) { return document.getElementById(id); };
+    function mq() { return window.matchMedia('(max-width:860px)').matches; }
+    var EMO = { home: '🏠', classes: '📚', map: '🗺️', students: '👥', cert: '🎓', frame: '🖼️', intake: '📥', roles: '🛡️', trash: '🗑️', outbox: '📤', tickets: '🎫', scan: '📷', bulk: '➕', reset: '🔑', qr: '▦', notif: '🔔', editinfo: '✏️', chpass: '🔐', set: '🎨', accounts: '👤', guide: '📖', bug: '🐞', out: '🚪', myclass: '📚', account: '🪪' };
+    var GRP = { 'OVERVIEW': 'عام', 'ACADEMICS': 'الأكاديمية', 'MANAGEMENT': 'الإدارة', 'MY ACCOUNT': 'حسابي' };
+    var TABS = { admin: [['home', 'الرئيسية'], ['classes', 'الصفوف'], ['students', 'الطلاب'], ['scan', 'الماسح']], student: [['home', 'الرئيسية'], ['myclass', 'صفّي'], ['account', 'حسابي'], ['tickets', 'طلباتي']] };
+    function role() { try { return (isOwner() || hasStaffAccess(currentUser)) ? 'admin' : 'student'; } catch (e) { return 'student'; } }
+    function item(id) { return document.querySelector('#pv-side .pv-it[data-id="' + id + '"]'); }
+    function label(it) { var t = ''; Array.prototype.forEach.call(it.childNodes, function (n) { if (n.nodeType === 3) t += n.textContent; }); return t.trim(); }
+    function closeMore() { var m = $('qu-more'); if (m) m.classList.remove('on'); }
+    function openMore() {
+        var m = $('qu-more'); if (!m) { m = document.createElement('div'); m.id = 'qu-more'; document.body.appendChild(m); }
+        var side = $('pv-side'), html = '<div class="qm-bg"></div><div class="qm-sheet"><div class="qm-grab"></div>', grid = false;
+        Array.prototype.forEach.call(side.children, function (c) {
+            if (c.classList.contains('pv-grp')) { if (grid) html += '</div>'; html += '<div class="qm-g">' + (GRP[c.textContent.trim()] || c.textContent.trim()) + '</div><div class="qm-grid">'; grid = true; }
+            else if (c.classList.contains('pv-it')) { var id = c.dataset.id, bd = c.querySelector('b,span'), n = bd && /\d/.test(bd.textContent) ? bd.textContent.trim() : ''; html += '<button type="button" class="qm-t' + (id === 'out' ? ' out' : '') + '" data-id="' + id + '"><i>' + (EMO[id] || '•') + '</i>' + label(c) + (n ? '<b>' + n + '</b>' : '') + '</button>'; }
+        });
+        if (grid) html += '</div>'; html += '</div>'; m.innerHTML = html;
+        m.querySelector('.qm-bg').onclick = closeMore;
+        Array.prototype.forEach.call(m.querySelectorAll('.qm-t'), function (b) { b.onclick = function () { var it = item(b.dataset.id); closeMore(); if (it) setTimeout(function () { it.click(); }, 120); }; });
+        var sh = m.querySelector('.qm-sheet'), y0 = null; sh.addEventListener('touchstart', function (e) { y0 = sh.scrollTop === 0 ? e.touches[0].clientY : null; }, { passive: true }); sh.addEventListener('touchend', function (e) { if (y0 != null && e.changedTouches[0].clientY - y0 > 70) closeMore(); y0 = null; }, { passive: true });
+        void m.offsetWidth; m.classList.add('on');
+    }
+    window.quMore = openMore;
+    function build(r) {
+        var nav = $('qu-bnav'); if (!nav) { nav = document.createElement('nav'); nav.id = 'qu-bnav'; document.body.appendChild(nav); }
+        nav.dataset.role = r;
+        nav.innerHTML = TABS[r].map(function (t) { return '<button type="button" data-t="' + t[0] + '"><i>' + EMO[t[0]] + '</i><span>' + t[1] + '</span><b></b></button>'; }).join('') + '<button type="button" data-t="more"><i>☰</i><span>المزيد</span><b></b></button>';
+        Array.prototype.forEach.call(nav.querySelectorAll('button'), function (b) { b.onclick = function () { closeMore(); if (b.dataset.t === 'more') { openMore(); return; } var it = item(b.dataset.t); if (it) it.click(); else if (window.pvShow) pvShow(b.dataset.t); }; });
+    }
+    function sync() {
+        var on = mq() && document.body.classList.contains('in-portal') && window.currentUser !== null && typeof currentUser !== 'undefined' && currentUser, nav = $('qu-bnav');
+        if (!on) { if (nav) nav.remove(); var m = $('qu-more'); if (m) m.remove(); document.body.classList.remove('qu-hasnav'); return; }
+        var r = role(); if (!nav || nav.dataset.role !== r) build(r); nav = $('qu-bnav'); document.body.classList.add('qu-hasnav');
+        var v = document.body.dataset.view || 'home', ids = TABS[r].map(function (t) { return t[0]; }), act = ids.indexOf(v) >= 0 ? v : (v === 'classroom' ? 'classes' : 'more');
+        Array.prototype.forEach.call(nav.querySelectorAll('button'), function (b) {
+            b.classList.toggle('on', b.dataset.t === act); var bd = b.querySelector('b'), it = item(b.dataset.t), n = '';
+            if (it) { var e = it.querySelector('b,span'); if (e && /^\s*\d+\s*$/.test(e.textContent)) n = e.textContent.trim(); } else if (b.dataset.t === 'more') { var nt = item('notif'), e2 = nt && nt.querySelector('b,span'); if (e2 && /^\s*\d+\s*$/.test(e2.textContent)) n = e2.textContent.trim(); }
+            bd.textContent = n; bd.style.display = n ? '' : 'none';
+        });
+    }
+    setInterval(sync, 600); window.addEventListener('resize', sync);
+    var _ps = window.pvShow; window.pvShow = function () { var r = _ps.apply(this, arguments); closeMore(); setTimeout(sync, 30); return r; };
+})();
+
 </script>
 <script>
 /* ===== الدخول بالبصمة (WebAuthn) — يعمل على نفس الجهاز بعد تفعيله مرة واحدة ===== */
