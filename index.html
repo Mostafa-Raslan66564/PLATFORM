@@ -9721,6 +9721,20 @@ window.QC={show:qcShow,leave:qcLeave,update:updateView,refresh:refreshStudents};
                 .catch(() => { });
         } catch (e) { console.warn('Firebase init failed', e); }
     </script>
+
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({
+      appId: "c09fbf69-1767-45c3-9257-00973c7a4671",
+      safari_web_id: "web.onesignal.auto.2cb21d9d-922f-420a-8137-99f511b7fc1b",
+      notifyButton: {
+        enable: true,
+      },
+    });
+  });
+</script>
 </body>
 
 </html>
