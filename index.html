@@ -2877,7 +2877,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         }
 
         body.in-portal #admin-dashboard.pv-empty,
-        body.in-portal:is([data-view=home], [data-view=cert], [data-view=set], [data-view=roles], [data-view=trash], [data-view=reset], [data-view=qr], [data-view=outbox], [data-view=course], [data-view=map], [data-view=tickets], [data-view=guide], [data-view=frame], [data-view=accounts], [data-view=scan], [data-view=bulk]) #admin-dashboard {
+        body.in-portal:is([data-view=home], [data-view=cert], [data-view=set], [data-view=roles], [data-view=trash], [data-view=reset], [data-view=qr], [data-view=outbox], [data-view=course], [data-view=map], [data-view=tickets], [data-view=guide], [data-view=frame], [data-view=accounts], [data-view=scan], [data-view=bulk], [data-view=subjects]) #admin-dashboard {
             display: none !important
         }
 
@@ -4347,6 +4347,14 @@ body.qu-vin .pv-card{animation-duration:.3s!important}
 
 
 @media(max-width:860px){#qu-more{z-index:99995!important}#qu-need{z-index:9985!important}}
+</style>
+<style id="qu-ext11-css">
+body[data-view=subjects] #pv-subjects{display:block}
+.sb-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0}.sb-row select{padding:8px;border:1px solid #cbd5e1;border-radius:9px;font:inherit}
+.sb-chip{display:inline-flex;align-items:center;gap:6px;background:#ecfdf5;border:1px solid #86efac;border-radius:999px;padding:3px 12px;font-size:.85rem}.sb-chip.lv{background:#eff6ff;border-color:#93c5fd}.sb-chip.ex{background:#fffbeb;border-color:#fcd34d}.sb-chip i{cursor:pointer;font-style:normal;color:#b91c1c}
+.qc-opt{display:flex;align-items:center;gap:4px;font-size:.8rem;white-space:nowrap}.qc-lock{background:#f8fafc;border-radius:10px;padding:8px 10px;border:1px dashed #cbd5e1}.qc-lock b{color:#064e3b}
+input.mk-locked{background:#e2e8f0!important;color:#64748b;cursor:not-allowed}
+
 </style>
 </head>
 
@@ -6967,7 +6975,7 @@ body.qu-vin .pv-card{animation-duration:.3s!important}
             const val = (i, x, w) => (i + '|' + w.id) in _gp ? _gp[i + '|' + w.id] : (hasMark(x, w) ? x.marks[w.id] : '');
             const avg = w => { const v = rows.map(([x]) => x).filter(x => hasMark(x, w)).map(x => parseFloat(x.marks[w.id])).filter(n => !isNaN(n)); return v.length ? (v.reduce((a, b) => a + b, 0) / v.length).toFixed(1) : '-'; };
             return `<div data-perm="grades" style="display:contents"><div class="cr-card cr-wrap"><table class="cr-grid"><thead><tr><th>الطالب</th>${items.map(w => `<th>${esc(w.title)}<br><small>/ ${esc(w.points)}</small></th>`).join('')}<th>المجموع %</th></tr></thead><tbody>`
-                + rows.map(([x, i]) => { const m = markOf(x); return `<tr><td>${esc(x.name)}</td>${items.map(w => `<td><input type="number" min="0" max="${esc(w.points)}" step="any" style="width:70px" value="${esc(val(i, x, w))}" oninput="_gp['${i}|${w.id}']=this.value"></td>`).join('')}<td><strong>${m == null ? '-' : m.toFixed(0) + '%'}</strong></td></tr>`; }).join('')
+                + rows.map(([x, i]) => { const m = markOf(x); return `<tr><td>${esc(x.name)}</td>${items.map(w => `<td><input type="number" min="0" max="${esc(w.points)}" step="any" style="width:70px" value="${esc(val(i, x, w))}"${window.markLockAttr ? window.markLockAttr(x, w) : ''} oninput="_gp['${i}|${w.id}']=this.value"></td>`).join('')}<td><strong>${m == null ? '-' : m.toFixed(0) + '%'}</strong></td></tr>`; }).join('')
                 + `<tr><td><strong>متوسط الصف</strong></td>${items.map(w => `<td>${avg(w)}</td>`).join('')}<td></td></tr></tbody></table></div>
         <div class="row-actions"><button type="button" class="btn-primary" data-perm-edit="grades" onclick="saveGrades()">حفظ العلامات</button><button type="button" class="btn-action" onclick="exportGradebook()"><i class="fa-solid fa-file-csv"></i> تصدير الجدول (CSV)</button></div></div>`;
         }
@@ -7506,11 +7514,11 @@ body.qu-vin .pv-card{animation-duration:.3s!important}
             function sideItems() {
                 const adm = isAdm(); const I = (id, icn, t, fn) => `<button class="pv-it" data-id="${id}" onclick="${fn}">${ic(icn)}${t}${id === 'notif' ? '<b id="pv-nbadge" style="display:none"></b>' : ''}</button>`;
                 let h = `<div class="pv-brand"><img src="شعار.png" onerror="this.onerror=null;this.src=FALLBACK_AVATAR"><div>بالقرآن نحيا<small>النظام الجامعي</small></div></div><div class="pv-grp">OVERVIEW</div>` + I('home', '🏠', 'الرئيسية', "pvShow('home')");
-                if (adm) { h += `<div class="pv-grp">ACADEMICS</div>` + I('classes', 'fa-layer-group', 'الصفوف والحلقات', "pvShow('classes')") + I('map', 'fa-diagram-project', 'خريطة الدورات', "pvShow('map')") + I('students', 'fa-users', 'الطلاب', "pvShow('students')") + I('cert', '🎓', 'الشهادات والوثائق', "pvShow('cert')") + I('frame', 'fa-image', 'إطار الصور', "pvShow('frame')") + I('intake', 'fa-file-arrow-up', 'رفع الملفات', "pvShow('intake')") + `<div class="pv-grp">MANAGEMENT</div>` + I('roles', '🛡️', 'الأدوار والصلاحيات', "openStaff()") + I('trash', 'fa-trash-can', 'سلة المحذوفات', "openModal('trash-modal')") + I('outbox', 'fa-paper-plane', 'الرسائل الصادرة', "pvShow('outbox')") + I('tickets', 'fa-ticket', 'الطلبات الواردة', "pvShow('tickets')") + I('scan', 'fa-camera', 'ماسح الحضور والرموز', "pvShow('scan')") + I('bulk', 'fa-table-list', 'إضافة أسماء دفعة واحدة', "pvShow('bulk')") + (isOwner() ? I('reset', 'fa-key', 'إعادة تعيين كلمات المرور', "pvShow('reset')") + I('qr', 'fa-qrcode', 'رموز QR', "pvShow('qr')") : ''); }
+                if (adm) { h += `<div class="pv-grp">ACADEMICS</div>` + I('classes', 'fa-layer-group', 'الصفوف والحلقات', "pvShow('classes')") + I('subjects', 'fa-book-open', 'المواد والمنسّقون', "pvShow('subjects')") + I('map', 'fa-diagram-project', 'خريطة الدورات', "pvShow('map')") + I('students', 'fa-users', 'الطلاب', "pvShow('students')") + I('cert', '🎓', 'الشهادات والوثائق', "pvShow('cert')") + I('frame', 'fa-image', 'إطار الصور', "pvShow('frame')") + I('intake', 'fa-file-arrow-up', 'رفع الملفات', "pvShow('intake')") + `<div class="pv-grp">MANAGEMENT</div>` + I('roles', '🛡️', 'الأدوار والصلاحيات', "openStaff()") + I('trash', 'fa-trash-can', 'سلة المحذوفات', "openModal('trash-modal')") + I('outbox', 'fa-paper-plane', 'الرسائل الصادرة', "pvShow('outbox')") + I('tickets', 'fa-ticket', 'الطلبات الواردة', "pvShow('tickets')") + I('scan', 'fa-camera', 'ماسح الحضور والرموز', "pvShow('scan')") + I('bulk', 'fa-table-list', 'إضافة أسماء دفعة واحدة', "pvShow('bulk')") + (isOwner() ? I('reset', 'fa-key', 'إعادة تعيين كلمات المرور', "pvShow('reset')") + I('qr', 'fa-qrcode', 'رموز QR', "pvShow('qr')") : ''); }
                 else h += `<div class="pv-grp">ACADEMICS</div>` + I('myclass', 'fa-chalkboard-user', 'صفّي', "pvMyClass()") + I('account', '🪪', 'حسابي', "pvShow('account')") + I('map', 'fa-diagram-project', 'خريطة الدورات', "pvShow('map')") + I('tickets', 'fa-ticket', 'طلباتي', "pvShow('tickets')");
                 h += `<div class="pv-grp">MY ACCOUNT</div>` + I('notif', 'fa-bell', 'الإشعارات', "openNotifCenter()") + I('editinfo', 'fa-user-pen', 'تعديل بياناتي', "openModal('edit-my-info-modal')") + I('chpass', 'fa-key', 'تغيير كلمة المرور', "openModal('cp-modal')") + I('set', '🎨', 'الإعدادات والمظهر', "pvShow('set')") + I('accounts', 'fa-people-arrows', 'تبديل الحساب', "pvShow('accounts')") + I('guide', 'fa-book', 'الدليل والأنظمة', "pvShow('guide')") + (isOwner() ? '' : I('bug', 'fa-bug', 'الإبلاغ عن خلل (يصل للإدارة)', "qBug()")) + I('out', 'fa-right-from-bracket', 'تسجيل الخروج', "logout()") + `<div class="pv-foot" id="pv-sync">التزامن: غير مفعّل</div>`; return h;
             }
-            const TT = { bulk: 'إضافة أسماء دفعة واحدة', scan: 'ماسح الحضور والرموز', accounts: 'تبديل الحساب', frame: 'إطار الصور', guide: 'الدليل والأنظمة', tickets: 'الطلبات والعرائض', roles: 'الأدوار والصلاحيات', trash: 'سلة المحذوفات', reset: 'إعادة تعيين كلمات المرور', qr: 'رموز QR', outbox: 'الرسائل الصادرة', course: 'الدورة', map: 'خريطة الدورات', home: 'الرئيسية', classes: 'الصفوف والحلقات', students: 'الطلاب', intake: 'رفع الملفات', cert: 'الشهادات والوثائق', set: 'الإعدادات والمظهر', account: 'حسابي' };
+            const TT = { subjects: 'المواد والمنسّقون', bulk: 'إضافة أسماء دفعة واحدة', scan: 'ماسح الحضور والرموز', accounts: 'تبديل الحساب', frame: 'إطار الصور', guide: 'الدليل والأنظمة', tickets: 'الطلبات والعرائض', roles: 'الأدوار والصلاحيات', trash: 'سلة المحذوفات', reset: 'إعادة تعيين كلمات المرور', qr: 'رموز QR', outbox: 'الرسائل الصادرة', course: 'الدورة', map: 'خريطة الدورات', home: 'الرئيسية', classes: 'الصفوف والحلقات', students: 'الطلاب', intake: 'رفع الملفات', cert: 'الشهادات والوثائق', set: 'الإعدادات والمظهر', account: 'حسابي' };
             window.pvMyClass = function () { const me = myRec(); const i = (appData.classes || []).findIndex(c => me && c.name === me.className); if (i < 0) { showToast('أنت غير مسجّل في صف'); return; } pvSide(false); openMyClassroom(i); };
             window.pvSide = function (o) { const s = $('pv-side'); if (!s) return; s.classList.toggle('open', o === undefined ? !s.classList.contains('open') : o); $('pv-scrim').classList.toggle('open', s.classList.contains('open')); };
             window.pvShow = function (v) {
@@ -7922,16 +7930,18 @@ body.qu-vin .pv-card{animation-duration:.3s!important}
         return h;
     };
     window.qcOpen = function (i) {
-        if (i == null) cE = { i: -1, f: { kind: 'course', name: '', teacher: '', sched: '', start: '', end: '' }, exams: [], prereq: [] };
-        else { var c = cls()[i]; if (!c) return; cE = { i: i, f: { kind: kindOf(c), name: c.name, teacher: c.teacher || '', sched: c.schedule || '', start: c.start || '', end: c.end || '' }, exams: JSON.parse(JSON.stringify(c.exams || [])), prereq: (c.prereq || []).slice() }; }
+        if (i == null) cE = { i: -1, f: { kind: 'course', name: '', teacher: '', sched: '', start: '', end: '' }, exams: [], prereq: [], sub: '', lvl: -1, off: {} };
+        else { var c = cls()[i]; if (!c) return; cE = { i: i, f: { kind: kindOf(c), name: c.name, teacher: c.teacher || '', sched: c.schedule || '', start: c.start || '', end: c.end || '' }, exams: JSON.parse(JSON.stringify(c.exams || [])), prereq: (c.prereq || []).slice(), sub: c.subject || '', lvl: c.levelIdx == null ? -1 : c.levelIdx, off: window.quTplOff(c) }; }
         pvShow('course');
     };
     function qcRead() {
         if (!$('qc-name')) return; var kr = document.querySelector('input[name=qc-kind]:checked');
-        cE.f = { kind: kr ? kr.value : (cE.f.kind || 'course'), name: $('qc-name').value, teacher: $('qc-teacher').value, sched: $('qc-sched').value, start: $('qc-start').value, end: $('qc-end') ? $('qc-end').value : '' };
-        cE.exams = Array.prototype.map.call(document.querySelectorAll('#qc-exams .qc-row'), function (r, k) { return { id: (cE.exams[k] && cE.exams[k].id) || rid(), name: r.querySelector('[data-k=n]').value, weight: parseFloat(r.querySelector('[data-k=w]').value) || 0 }; });
-        cE.prereq = Array.prototype.map.call(document.querySelectorAll('#qc-pre input:checked'), function (c) { return c.value; });
+        cE.f = { kind: kr ? kr.value : (cE.f.kind || 'course'), name: $('qc-name').value, teacher: $('qc-teacher').value, sched: $('qc-sched').value, start: $('qc-start').value, end: $('qc-end') ? $('qc-end').value : '', auto: cE.f.auto };
+        if ($('qc-exams')) cE.exams = Array.prototype.map.call(document.querySelectorAll('#qc-exams .qc-row'), function (r, k) { return { id: (cE.exams[k] && cE.exams[k].id) || rid(), name: r.querySelector('[data-k=n]').value, weight: parseFloat(r.querySelector('[data-k=w]').value) || 0 }; });
+        if ($('qc-pre')) cE.prereq = Array.prototype.map.call(document.querySelectorAll('#qc-pre input:checked'), function (c) { return c.value; });
+        var sl = $('qc-sub'); if (sl) { cE.sub = sl.value; var lv = $('qc-lvl'); cE.lvl = lv ? +lv.value : -1; cE.off = {}; Array.prototype.forEach.call(document.querySelectorAll('#qc-tpl input[data-e]'), function (c) { if (!c.checked) cE.off[c.dataset.e] = true; }); }
     }
+    window.qcLvl = function (subj) { qcRead(); var sub = window.quSubs().find(function (x) { return x.id === cE.sub; }); if (subj) { cE.lvl = sub ? 0 : -1; cE.off = {}; } if (sub) { var lv = (sub.levels || [])[cE.lvl], nm = sub.name + ' — ' + (lv ? lv.name : ''); if (!cE.f.name || cE.f.name === cE.f.auto) cE.f.name = nm; cE.f.auto = nm; cE.f.kind = 'course'; } qcRender(); };
     window.qcKind = function () { qcRead(); qcRender(); };
     function qcTotal() { qcRead(); var wk = $('qc-weeks'); if (wk) { var d1 = Date.parse(cE.f.start), d2 = Date.parse(cE.f.end); wk.textContent = (cE.f.kind === 'course' && d1 && d2 && d2 >= d1) ? 'مدة الدورة: ' + Math.round((d2 - d1) / 6048e5) + ' أسبوع (المعتاد: 14 أسبوع دراسة + أسبوعان للامتحانات). التسجيل يُغلق بعد أسبوع من البداية.' : ''; } var s = cE.exams.reduce(function (a, e) { return a + (+e.weight || 0); }, 0), el = $('qc-total'); if (el) { el.textContent = 'المجموع: ' + s + '%'; el.style.color = (!cE.exams.length || Math.abs(s - 100) < 0.01) ? '#15803d' : '#b91c1c'; } }
     window.qcTotal = qcTotal;
@@ -7940,30 +7950,42 @@ body.qu-vin .pv-card{animation-duration:.3s!important}
     function dependsOn(pid, target, seen) { seen = seen || {}; if (pid === target) return true; if (seen[pid]) return false; seen[pid] = 1; var c = cById(pid); return !!c && (c.prereq || []).some(function (q) { return dependsOn(q, target, seen); }); }
     function qcRender() {
         var b = $('pv-course'); if (!b) return; var f = cE.f, isC = f.kind !== 'class', me = cE.i >= 0 ? cls()[cE.i] : null, others = cls().filter(function (c, k) { return k !== cE.i && kindOf(c) === 'course'; });
-        b.innerHTML = '<div class="pv-card"><h3>' + (me ? '✏️ تعديل' : '➕ إضافة') + '</h3><div class="qc-kind"><label><input type="radio" name="qc-kind" value="course"' + (isC ? ' checked' : '') + ' onchange="qcKind()"> <b>دورة</b> — لها مدة زمنية محددة (بداية ونهاية) ثم ينتقل الطالب إلى المرحلة التالية</label><label><input type="radio" name="qc-kind" value="class"' + (!isC ? ' checked' : '') + ' onchange="qcKind()"> <b>صف / حلقة مستمرة</b> — لا ينتهي بمدة زمنية <span style="color:#7c3aed">(لا ينتهي)</span></label></div><div class="qu-grid">'
+        var SB = window.quSubs(), sub = SB.find(function (x) { return x.id === cE.sub; }), isOwn = window.quIsOwner(), subBlock = '';
+        if (SB.length) { subBlock = '<div class="qu-grid" style="margin:10px 0"><label>المادة' + (isOwn ? ' (اختياري للمدير)' : ' (إجباري للدورات)') + '<select id="qc-sub" onchange="qcLvl(true)"><option value="">' + (isOwn ? '— بدون مادة (حرّة) —' : '— اختر المادة —') + '</option>' + SB.map(function (x) { return '<option value="' + X(x.id) + '"' + (x.id === cE.sub ? ' selected' : '') + '>' + X(x.name) + '</option>'; }).join('') + '</select></label>' + (sub ? '<label>المستوى<select id="qc-lvl" onchange="qcLvl(false)">' + (sub.levels || []).map(function (l, k) { return '<option value="' + k + '"' + (k === cE.lvl ? ' selected' : '') + '>' + X(l.name) + '</option>'; }).join('') + '</select></label>' : '') + '</div>' + (sub ? '<p class="muted-small">أنواع الاختبارات ونسبها يحددها منسّق المادة (' + X(window.quCoordNames(sub).join('، ') || 'غير معيَّن') + ') ولا يمكن تعديلها هنا.</p>' : ''); }
+        var exFree = '<div class="pv-card"><h3>📝 الامتحانات والعلامات (نسبة كل واحد من المعدل)</h3><div id="qc-exams">' + cE.exams.map(function (e, k) { return '<div class="qc-row"><input data-k="n" placeholder="مثال: الامتحان الأول" value="' + X(e.name) + '" oninput="qcTotal()"><input data-k="w" type="number" min="0" max="100" step="any" value="' + (e.weight || '') + '" placeholder="%" oninput="qcTotal()"><span>%</span><button type="button" class="btn-action" onclick="qcDel(' + k + ')" style="background:#b91c1c">حذف</button></div>'; }).join('') + '</div>'
+            + '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px"><button type="button" class="btn-action" onclick="qcAdd()">+ إضافة امتحان</button><b id="qc-total"></b></div><p class="muted-small">مجموع النسب لازم يساوي 100%. الامتحانات تظهر تلقائياً بتبويب «العلامات» داخل الصف لإدخال العلامات، وتدخل بحساب المعدل حسب نسبتها.</p></div>';
+        var tplCard = sub ? '<div class="pv-card"><h3>📝 اختبارات المادة (يحددها المنسّق)</h3><div id="qc-tpl">' + (sub.exams || []).map(function (e) { return '<div class="qc-row qc-lock"><span style="flex:1">🔒 ' + X(e.name) + (e.optional ? ' <small>(حسب المعلم)</small>' : '') + '</span><b>' + (+e.weight) + '%</b>' + (e.optional ? '<label class="qc-opt"><input type="checkbox" data-e="' + X(e.id) + '"' + (cE.off[e.id] ? '' : ' checked') + '> مفعّل</label>' : '') + '</div>'; }).join('') + '</div><p class="muted-small">تُحسب النسب فعلياً على الاختبارات المفعّلة فقط (تُعاد النسب لتساوي 100%).</p></div>' : '';
+        var roList = cE.exams.length ? '<div id="qc-ro">' + cE.exams.map(function (e) { return '<div class="qc-row qc-lock"><span style="flex:1">🔒 ' + X(e.name) + '</span><b>' + (+e.weight) + '%</b></div>'; }).join('') + '</div>' : '';
+        var exCard = sub ? tplCard : (isOwn ? exFree : '<div class="pv-card"><h3>📝 الامتحانات والعلامات</h3>' + (roList || '<p class="muted-small">أنواع الاختبارات ونسبها يحددها منسّق المادة. اختر المادة والمستوى أعلاه لتُطبَّق عليها.</p>') + '</div>');
+        var preFree = '<div class="pv-card"><h3>🔗 المتطلبات السابقة (دورات فقط)</h3><p class="muted-small">لا يُسجَّل الطالب هنا إلا بعد إتمامه الدورات المحددة. الصفوف المستمرة لا تُعدّ متطلباً لأنها لا تنتهي.</p><div id="qc-pre" class="qc-pre">' + (others.map(function (c) { var bad = me && dependsOn(c.id, me.id); return '<label><input type="checkbox" value="' + X(c.id) + '"' + (cE.prereq.indexOf(c.id) >= 0 ? ' checked' : '') + (bad ? ' disabled' : '') + '> ' + X(c.name) + (bad ? ' <small>(يعتمد على هذه الدورة)</small>' : '') + '</label>'; }).join('') || '<small class="muted-small">لا توجد دورات أخرى بعد.</small>') + '</div></div>';
+        var preCard = sub ? '<div class="pv-card"><h3>🔗 المتطلبات السابقة</h3><p class="muted-small">تُربط تلقائياً بالمستوى السابق من نفس المادة: يلزم إتمامه قبل التسجيل.</p></div>' : preFree;
+        b.innerHTML = '<div class="pv-card"><h3>' + (me ? '✏️ تعديل' : '➕ إضافة') + '</h3><div class="qc-kind"><label><input type="radio" name="qc-kind" value="course"' + (isC ? ' checked' : '') + ' onchange="qcKind()"> <b>دورة</b> — لها مدة زمنية محددة (بداية ونهاية) ثم ينتقل الطالب إلى المرحلة التالية</label><label><input type="radio" name="qc-kind" value="class"' + (!isC ? ' checked' : '') + ' onchange="qcKind()"> <b>صف / حلقة مستمرة</b> — لا ينتهي بمدة زمنية <span style="color:#7c3aed">(لا ينتهي)</span></label></div>' + subBlock + '<div class="qu-grid">'
             + '<label>' + (isC ? 'اسم الدورة' : 'اسم الصف') + '<input id="qc-name" value="' + X(f.name) + '"></label><label>المشرف / الأستاذ<input id="qc-teacher" value="' + X(f.teacher) + '"></label>'
             + '<label>الموعد<input id="qc-sched" value="' + X(f.sched) + '" placeholder="السبت 5:00 مساءً"></label><label>' + (isC ? 'بداية الدورة (إجباري)' : 'تاريخ البدء (اختياري)') + '<input type="date" id="qc-start" value="' + X(f.start) + '" oninput="qcTotal()"></label>'
             + (isC ? '<label>نهاية الدورة (إجباري)<input type="date" id="qc-end" value="' + X(f.end) + '" oninput="qcTotal()"></label>' : '') + '</div><p id="qc-weeks" class="muted-small"></p></div>'
-            + '<div class="pv-card"><h3>📝 الامتحانات والعلامات (نسبة كل واحد من المعدل)</h3><div id="qc-exams">' + cE.exams.map(function (e, k) { return '<div class="qc-row"><input data-k="n" placeholder="مثال: الامتحان الأول" value="' + X(e.name) + '" oninput="qcTotal()"><input data-k="w" type="number" min="0" max="100" step="any" value="' + (e.weight || '') + '" placeholder="%" oninput="qcTotal()"><span>%</span><button type="button" class="btn-action" onclick="qcDel(' + k + ')" style="background:#b91c1c">حذف</button></div>'; }).join('') + '</div>'
-            + '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px"><button type="button" class="btn-action" onclick="qcAdd()">+ إضافة امتحان</button><b id="qc-total"></b></div><p class="muted-small">مجموع النسب لازم يساوي 100%. الامتحانات تظهر تلقائياً بتبويب «العلامات» داخل الصف لإدخال العلامات، وتدخل بحساب المعدل حسب نسبتها.</p></div>'
-            + '<div class="pv-card"><h3>🔗 المتطلبات السابقة (دورات فقط)</h3><p class="muted-small">لا يُسجَّل الطالب هنا إلا بعد إتمامه الدورات المحددة. الصفوف المستمرة لا تُعدّ متطلباً لأنها لا تنتهي.</p><div id="qc-pre" class="qc-pre">' + (others.map(function (c) { var bad = me && dependsOn(c.id, me.id); return '<label><input type="checkbox" value="' + X(c.id) + '"' + (cE.prereq.indexOf(c.id) >= 0 ? ' checked' : '') + (bad ? ' disabled' : '') + '> ' + X(c.name) + (bad ? ' <small>(يعتمد على هذه الدورة)</small>' : '') + '</label>'; }).join('') || '<small class="muted-small">لا توجد دورات أخرى بعد.</small>') + '</div></div>'
+            + exCard
+            + preCard
             + '<div class="pv-card" style="display:flex;gap:10px;flex-wrap:wrap"><button type="button" class="btn-primary" style="width:auto;padding:10px 26px" onclick="qcSave()">حفظ</button><button type="button" class="btn-action" onclick="pvShow(\'classes\')">رجوع</button>'
             + (me && isC ? '<button type="button" class="btn-action" style="background:#2d6a4f" onclick="qcComplete()">إنهاء الدورة وتسجيل الناجحين (علامة ≥ 50)</button>' : '') + (me ? '<button type="button" class="btn-action" onclick="pvShow(\'map\')">الخريطة</button>' : '') + '</div>';
         qcTotal();
     }
     window.qcSave = function () {
         qcRead(); var f = cE.f, isC = f.kind !== 'class', name = (f.name || '').trim(), teacher = (f.teacher || '').trim();
+        var sub = window.quSubs().find(function (x) { return x.id === cE.sub; }), isOwn = window.quIsOwner(); if (sub) isC = true;
+        if (!sub && !isOwn && isC && cE.i < 0) { T('اختر المادة والمستوى: الدورات تُنشأ من هيكل المادة الذي يحدده المنسّق'); return; }
         if (!name || !teacher) { T('اكتب الاسم والمشرف'); return; }
         if (cls().some(function (c, k) { return c.name === name && k !== cE.i; })) { T('يوجد صف بهذا الاسم'); return; }
         if (isC && (!f.start || !f.end)) { T('الدورة لها بداية ونهاية: حدّد التاريخين'); return; }
         if (isC && f.start > f.end) { T('تاريخ النهاية قبل البداية'); return; }
-        var ex = cE.exams.filter(function (e) { return (e.name || '').trim(); }); ex.forEach(function (e) { e.name = e.name.trim(); });
-        var sum = ex.reduce(function (a, e) { return a + (+e.weight || 0); }, 0);
-        if (ex.length && Math.abs(sum - 100) > 0.01) { T('مجموع النسب لازم يساوي 100% (الآن ' + sum + '%)'); return; }
+        var ex, sum;
+        if (sub) { ex = (sub.exams || []).filter(function (e) { return !(e.optional && cE.off[e.id]); }).map(function (e) { return { id: e.id, src: e.id, name: e.name, weight: +e.weight, tpl: true }; }); }
+        else if (!isOwn) { ex = cE.i >= 0 ? JSON.parse(JSON.stringify(cls()[cE.i].exams || [])) : []; }
+        else { ex = cE.exams.filter(function (e) { return (e.name || '').trim(); }); ex.forEach(function (e) { e.name = e.name.trim(); }); sum = ex.reduce(function (a, e) { return a + (+e.weight || 0); }, 0); if (ex.length && Math.abs(sum - 100) > 0.01) { T('مجموع النسب لازم يساوي 100% (الآن ' + sum + '%)'); return; } }
         var c, isNew = cE.i < 0;
         if (isNew) { c = { id: 'C' + Date.now().toString(36), owner: currentUser ? lc(currentUser.email) : '', ownerName: currentUser ? currentUser.name : '' }; cls().push(c); } else c = cls()[cE.i];
+        ex.forEach(function (e) { if (e.tpl) { e.src = e.src || e.id; e.id = e.src + '_' + c.id; } });
         if (c.id && cE.prereq.some(function (p) { return dependsOn(p, c.id); })) { T('لا يمكن أن يكون المتطلب معتمداً على نفس الدورة'); return; }
-        var old = c.name; c.kind = isC ? 'course' : 'class'; c.name = name; c.teacher = teacher; c.schedule = (f.sched || '').trim(); c.start = f.start || ''; c.end = isC ? f.end : ''; c.exams = ex; c.prereq = cE.prereq.slice();
+        var old = c.name; c.kind = isC ? 'course' : 'class'; c.name = name; c.teacher = teacher; c.schedule = (f.sched || '').trim(); c.start = f.start || ''; c.end = isC ? f.end : ''; c.exams = ex; c.prereq = cE.prereq.slice(); if (sub) { c.subject = sub.id; c.levelIdx = cE.lvl; } else if (isOwn) { delete c.subject; delete c.levelIdx; } if (window.quRelink) window.quRelink(c);
         if (!isNew && old && old !== name) { appData.students.forEach(function (s) { if (s.className === old) s.className = name; }); cwList().forEach(function (w) { if (w.className === old) w.className = name; }); (appData.stream || []).forEach(function (p) { if (p.className === old) p.className = name; }); }
         var cw = cwList(), keep = {}; ex.forEach(function (e) { var id = 'EX-' + e.id; keep[id] = 1; var w = cw.find(function (x) { return x.id === id; }); if (!w) { w = newWork(name, 'assignment', e.name, 100, 'الامتحانات'); w.id = id; w.examId = e.id; cw.push(w); ensureTopic(name, 'الامتحانات'); } w.title = e.name; w.className = name; w.weight = +e.weight; w.points = 100; });
         appData.classwork = cw.filter(function (w) { var gone = w.className === name && w.examId && !keep[w.id]; if (gone) appData.students.forEach(function (s) { if (s.marks) delete s.marks[w.id]; }); return !gone; });
@@ -9557,6 +9579,97 @@ window.QC={show:qcShow,leave:qcLeave,update:updateView,refresh:refreshStudents};
 })();
 
 </script>
+<script id="qu-ext11">
+/* ===== المواد ومنسّقو المواد + قفل العلامات بعد 5 ساعات ===== */
+(function () {
+    var $ = function (id) { return document.getElementById(id); };
+    function lc(s) { return String(s || '').trim().toLowerCase(); }
+    function X(s) { return esc(s); }
+    function T(m) { showToast(m); }
+    function owner() { try { return isOwner(); } catch (e) { return false; } }
+    function staff() { try { return !!currentUser && (isOwner() || hasStaffAccess(currentUser)); } catch (e) { return false; } }
+    function rid() { return 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
+    function subs() { return appData.subjects || (appData.subjects = []); }
+    function coordOf(s) { return !!currentUser && (s.coordinators || []).indexOf(lc(currentUser.email)) >= 0; }
+    function canEdit(s) { return owner() || coordOf(s); }
+    function pname(e) { var p = (appData.students || []).concat(appData.users || []).find(function (x) { return lc(x.email) === lc(e); }); return p ? p.name : e; }
+    window.quSubs = function () { return appData.subjects || []; }; window.quIsOwner = owner;
+    window.quCoordNames = function (s) { return (s.coordinators || []).map(pname); };
+    window.quTplOff = function (c) { var s = (appData.subjects || []).find(function (x) { return x.id === (c && c.subject); }), off = {}; if (!s) return off; var have = {}; (c.exams || []).forEach(function (e) { have[e.src || e.id] = true; }); (s.exams || []).forEach(function (e) { if (e.optional && !have[e.id]) off[e.id] = true; }); return off; };
+    /* ربط دورات المستويات تلقائياً: المستوى ن يتطلب إتمام المستوى ن-1 من نفس المادة */
+    window.quRelink = function (c) {
+        if (!c || !c.subject || c.levelIdx == null) return; c.prereq = c.prereq || [];
+        (appData.classes || []).forEach(function (d) { if (d === c || d.subject !== c.subject || d.levelIdx == null) return;
+            if (d.levelIdx === c.levelIdx - 1 && c.prereq.indexOf(d.id) < 0) c.prereq.push(d.id);
+            if (d.levelIdx === c.levelIdx + 1) { d.prereq = d.prereq || []; if (d.prereq.indexOf(c.id) < 0) d.prereq.push(c.id); } });
+    };
+
+    /* ---------- صفحة المواد ---------- */
+    var a0 = $('pv-set'); if (a0) a0.insertAdjacentHTML('afterend', '<section id="pv-subjects" class="qu-pg"></section>');
+    var ED = null; /* {id, exams, levels} أثناء تعديل الهيكل */
+    function staffList() { return (appData.students || []).concat(appData.users || []).filter(function (x) { return x && x.email && x.perms && Object.keys(x.perms).some(function (k) { return x.perms[k] === 'view' || x.perms[k] === 'edit'; }); }); }
+    function render() {
+        var b = $('pv-subjects'); if (!b) return; if (!staff()) { b.innerHTML = '<div class="pv-card"><p>هذه الصفحة للمشرفين.</p></div>'; return; }
+        if (ED) { renderEd(b); return; }
+        var h = '<div class="pv-card"><h3>📚 المواد ومنسّقوها</h3><p class="muted-small">المدير يعرّف المواد ويعيّن منسّقاً لكل مادة. المنسّق يحدّد هيكل مادته (المستويات وأنواع الاختبارات ونسبها)، والمعلم يُنشئ دوراته من هذا الهيكل دون أن يعدّل أنواع الاختبارات.</p>'
+            + (owner() ? '<div style="display:flex;gap:8px;flex-wrap:wrap"><input id="sb-new" placeholder="اسم مادة جديدة (مثال: التجويد)" style="flex:1;min-width:200px;padding:10px;border:1px solid #cbd5e1;border-radius:10px"><button class="btn-primary" style="width:auto;padding:10px 22px" onclick="sbAdd()">+ إضافة مادة</button></div>' : '') + '</div>';
+        h += subs().map(function (s) {
+            var cs = (s.coordinators || []).map(function (e) { return '<span class="sb-chip">' + X(pname(e)) + (owner() ? '<i onclick="sbDelCoord(\'' + s.id + '\',\'' + X(e) + '\')">×</i>' : '') + '</span>'; }).join('') || '<small class="muted-small">لا منسّق بعد</small>';
+            var avail = staffList().filter(function (p) { return (s.coordinators || []).indexOf(lc(p.email)) < 0; });
+            return '<div class="pv-card"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><h3>' + X(s.name) + '</h3><div>' + (canEdit(s) ? '<button class="btn-action" onclick="sbEdit(\'' + s.id + '\')">تعديل الهيكل</button>' : '') + (owner() ? ' <button class="btn-action" style="background:#b91c1c" onclick="sbDel(\'' + s.id + '\')">حذف</button>' : '') + '</div></div>'
+                + '<div class="sb-row"><b>المنسّقون:</b> ' + cs + '</div>' + (owner() ? '<div class="sb-row"><select id="sbc-' + s.id + '"><option value="">— إضافة منسّق —</option>' + avail.map(function (p) { return '<option value="' + X(lc(p.email)) + '">' + X(p.name) + '</option>'; }).join('') + '</select><button class="btn-action" onclick="sbAddCoord(\'' + s.id + '\')">إضافة</button></div>' + (avail.length ? '' : '<small class="muted-small">لتعيين منسّق أضف الشخص أولاً من «الأدوار والصلاحيات».</small>') : '')
+                + '<div class="sb-row"><b>المستويات:</b> ' + ((s.levels || []).map(function (l, k) { return '<span class="sb-chip lv">' + (k + 1) + '. ' + X(l.name) + '</span>'; }).join('') || '<small class="muted-small">لم تُحدَّد</small>') + '</div>'
+                + '<div class="sb-row"><b>أنواع الاختبارات:</b> ' + ((s.exams || []).map(function (e) { return '<span class="sb-chip ex">' + X(e.name) + ' ' + (+e.weight) + '%' + (e.optional ? ' (حسب المعلم)' : '') + '</span>'; }).join('') || '<small class="muted-small">لم تُحدَّد</small>') + '</div></div>';
+        }).join('') || '<div class="pv-card"><p class="muted-small">لا توجد مواد بعد.</p></div>';
+        b.innerHTML = h;
+    }
+    function renderEd(b) {
+        var s = subs().find(function (x) { return x.id === ED.id; }); if (!s) { ED = null; return render(); }
+        b.innerHTML = '<div class="pv-card"><h3>🧩 هيكل مادة «' + X(s.name) + '»</h3><h4 style="margin:10px 0 6px">أنواع الاختبارات ونسبها (تنطبق على كل مستويات المادة)</h4><div id="sb-ex">' + ED.exams.map(function (e, k) { return '<div class="qc-row"><input data-k="n" placeholder="مثال: الاختبار الأول" value="' + X(e.name) + '" oninput="sbTot()"><input data-k="w" type="number" min="0" max="100" step="any" value="' + (e.weight || '') + '" oninput="sbTot()"><span>%</span><label class="qc-opt"><input type="checkbox" data-k="o"' + (e.optional ? ' checked' : '') + '> حسب المعلم (مثل المشروع)</label><button class="btn-action" style="background:#b91c1c" onclick="sbDelEx(' + k + ')">حذف</button></div>'; }).join('') + '</div><div style="display:flex;gap:10px;align-items:center;margin-top:8px"><button class="btn-action" onclick="sbAddEx()">+ نوع اختبار</button><b id="sb-tot"></b></div><p class="muted-small">مجموع النسب (بما فيها الاختيارية) لازم يساوي 100%. إن عطّل المعلم اختباراً اختيارياً أُعيد توزيع النسب تلقائياً على الباقي.</p>'
+            + '<h4 style="margin:14px 0 6px">المستويات / الدورات (بالترتيب)</h4><div id="sb-lv">' + ED.levels.map(function (l, k) { return '<div class="qc-row"><span class="bk-n">' + (k + 1) + '</span><input data-k="l" placeholder="مثال: الدورة الأولى" value="' + X(l.name) + '"><button class="btn-action" onclick="sbMv(' + k + ',-1)">↑</button><button class="btn-action" onclick="sbMv(' + k + ',1)">↓</button><button class="btn-action" style="background:#b91c1c" onclick="sbDelLv(' + k + ')">حذف</button></div>'; }).join('') + '</div><button class="btn-action" onclick="sbAddLv()">+ مستوى</button>'
+            + '<div style="display:flex;gap:10px;margin-top:16px"><button class="btn-primary" style="width:auto;padding:10px 26px" onclick="sbSave()">حفظ الهيكل</button><button class="btn-action" onclick="sbCancel()">إلغاء</button></div></div>'; sbTot();
+    }
+    function readEd() {
+        if (!ED || !$('sb-ex')) return;
+        ED.exams = Array.prototype.map.call(document.querySelectorAll('#sb-ex .qc-row'), function (r, k) { return { id: (ED.exams[k] && ED.exams[k].id) || rid(), name: r.querySelector('[data-k=n]').value, weight: parseFloat(r.querySelector('[data-k=w]').value) || 0, optional: r.querySelector('[data-k=o]').checked }; });
+        ED.levels = Array.prototype.map.call(document.querySelectorAll('#sb-lv .qc-row'), function (r, k) { return { id: (ED.levels[k] && ED.levels[k].id) || rid(), name: r.querySelector('[data-k=l]').value }; });
+    }
+    window.sbTot = function () { readEd(); var t = ED.exams.reduce(function (a, e) { return a + (+e.weight || 0); }, 0), el = $('sb-tot'); if (el) { el.textContent = 'المجموع: ' + t + '%'; el.style.color = Math.abs(t - 100) < .01 ? '#15803d' : '#b91c1c'; } };
+    window.sbAddEx = function () { readEd(); ED.exams.push({ id: rid(), name: '', weight: 0, optional: false }); render(); }; window.sbDelEx = function (k) { readEd(); ED.exams.splice(k, 1); render(); };
+    window.sbAddLv = function () { readEd(); ED.levels.push({ id: rid(), name: '' }); render(); }; window.sbDelLv = function (k) { readEd(); ED.levels.splice(k, 1); render(); };
+    window.sbMv = function (k, d) { readEd(); var j = k + d; if (j < 0 || j >= ED.levels.length) return; var t = ED.levels[k]; ED.levels[k] = ED.levels[j]; ED.levels[j] = t; render(); };
+    window.sbEdit = function (id) { var s = subs().find(function (x) { return x.id === id; }); if (!s || !canEdit(s)) { T('هذا الهيكل يعدّله منسّق المادة فقط'); return; } ED = { id: id, exams: JSON.parse(JSON.stringify(s.exams || [])), levels: JSON.parse(JSON.stringify(s.levels || [])) }; render(); };
+    window.sbCancel = function () { ED = null; render(); };
+    window.sbSave = function () {
+        readEd(); var s = subs().find(function (x) { return x.id === ED.id; }); if (!s || !canEdit(s)) { T('غير مسموح'); return; }
+        var ex = ED.exams.filter(function (e) { return e.name.trim(); }).map(function (e) { return { id: e.id, name: e.name.trim(), weight: +e.weight, optional: !!e.optional }; }), lv = ED.levels.filter(function (l) { return l.name.trim(); }).map(function (l) { return { id: l.id, name: l.name.trim() }; });
+        var t = ex.reduce(function (a, e) { return a + e.weight; }, 0); if (ex.length && Math.abs(t - 100) > .01) { T('مجموع النسب لازم يساوي 100% (الآن ' + t + '%)'); return; } if (!lv.length) { T('أضف مستوى واحداً على الأقل'); return; }
+        s.exams = ex; s.levels = lv; s.editedBy = lc(currentUser.email); s.editedAt = Date.now(); saveData(); ED = null; T('تم حفظ هيكل المادة. التغيير يسري على الدورات الجديدة.'); render();
+    };
+    window.sbAdd = function () { if (!owner()) return; var n = ($('sb-new').value || '').trim(); if (!n) { T('اكتب اسم المادة'); return; } if (subs().some(function (s) { return s.name === n; })) { T('المادة موجودة'); return; } subs().push({ id: rid(), name: n, coordinators: [], exams: [], levels: [] }); saveData(); render(); };
+    window.sbDel = function (id) { if (!owner()) return; if (!confirm('حذف المادة؟ الدورات المنشأة منها تبقى كما هي.')) return; appData.subjects = subs().filter(function (s) { return s.id !== id; }); saveData(); render(); };
+    window.sbAddCoord = function (id) { if (!owner()) return; var v = $('sbc-' + id).value; if (!v) return; var s = subs().find(function (x) { return x.id === id; }); s.coordinators = s.coordinators || []; if (s.coordinators.indexOf(v) < 0) s.coordinators.push(v); saveData(); try { notify([v], { type: 'info', title: 'تعيين منسّق مادة', text: 'عُيّنت منسّقاً لمادة «' + s.name + '»، ويمكنك تحديد هيكلها من «المواد والمنسّقون».' }); } catch (e) { } render(); };
+    window.sbDelCoord = function (id, e) { if (!owner()) return; var s = subs().find(function (x) { return x.id === id; }); s.coordinators = (s.coordinators || []).filter(function (x) { return x !== lc(e); }); saveData(); render(); };
+    var _ps = window.pvShow; window.pvShow = function (v) { _ps.apply(this, arguments); try { if (v === 'subjects') { ED = null; render(); } } catch (e) { console.error(e); } };
+
+    /* ---------- قفل العلامات: بعد 5 ساعات من وضعها لا يغيّرها أحد ---------- */
+    var LOCK = 5 * 3600 * 1000;
+    function stampLegacy() { var ch = false; (appData.students || []).forEach(function (x) { if (!x.marks) return; x.markT = x.markT || {}; Object.keys(x.marks).forEach(function (w) { if (x.marks[w] != null && !x.markT[w]) { x.markT[w] = Date.now(); ch = true; } }); Object.keys(x.markT).forEach(function (w) { if (x.marks[w] == null) { delete x.markT[w]; ch = true; } }); }); return ch; }
+    function isLocked(x, wid) { var t = x && x.markT && x.markT[wid]; return !!t && Date.now() - t > LOCK; }
+    window.markLockAttr = function (x, w) { if (!x || !w || !x.marks || x.marks[w.id] == null) return ''; var t = x.markT && x.markT[w.id]; if (!t) return ''; var left = LOCK - (Date.now() - t); if (left <= 0) return ' disabled title="مقفلة: مرّ أكثر من 5 ساعات على وضع العلامة، ولا يحق لأحد تغييرها" class="mk-locked"'; return ' title="تُقفل بعد ' + (left > 3600e3 ? Math.round(left / 3600e3 * 10) / 10 + ' ساعة' : Math.max(1, Math.round(left / 60e3)) + ' دقيقة') + '"'; };
+    var _sg = window.saveGrades; window.saveGrades = function () {
+        stampLegacy(); var rej = 0, add = [];
+        Object.keys(_gp).forEach(function (k) { var p = k.split('|'), x = appData.students[+p[0]], wid = p[1]; if (!x) return; var had = x.marks && x.marks[wid] != null, nv = String(_gp[k]).trim();
+            if (had && isLocked(x, wid)) { if (nv !== String(x.marks[wid])) rej++; delete _gp[k]; return; }
+            if (!had && nv !== '') add.push([x, wid]); });
+        var r = _sg.apply(this, arguments);
+        add.forEach(function (a) { var x = a[0]; if (x.marks && x.marks[a[1]] != null) { x.markT = x.markT || {}; if (!x.markT[a[1]]) x.markT[a[1]] = Date.now(); } });
+        stampLegacy(); saveData(); if (rej) T('لم يُغيَّر ' + rej + ' علامة: مقفلة لأن 5 ساعات مرّت على وضعها'); try { renderClassroom(); } catch (e) { } return r;
+    };
+    setInterval(function () { try { if (owner() && stampLegacy()) saveData(); } catch (e) { } }, 4000);
+})();
+
+</script>
 <script>
 /* ===== الدخول بالبصمة (WebAuthn) — يعمل على نفس الجهاز بعد تفعيله مرة واحدة ===== */
 (function () {
@@ -9721,20 +9834,6 @@ window.QC={show:qcShow,leave:qcLeave,update:updateView,refresh:refreshStudents};
                 .catch(() => { });
         } catch (e) { console.warn('Firebase init failed', e); }
     </script>
-
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-<script>
-  window.OneSignalDeferred = window.OneSignalDeferred || [];
-  OneSignalDeferred.push(async function(OneSignal) {
-    await OneSignal.init({
-      appId: "c09fbf69-1767-45c3-9257-00973c7a4671",
-      safari_web_id: "web.onesignal.auto.2cb21d9d-922f-420a-8137-99f511b7fc1b",
-      notifyButton: {
-        enable: true,
-      },
-    });
-  });
-</script>
 </body>
 
 </html>
